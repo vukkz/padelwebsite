@@ -1,26 +1,184 @@
 @import "tailwindcss";
 
+/*
+  Padel House — design tokens.
+  Palette adapted from the club's own identity ("zelena zona", specialty coffee,
+  premium event prostor): deep court green + padel-ball volt on warm off-white.
+  Components consume the semantic tokens below, never raw hex.
+*/
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Brand */
+  --color-green-950: #071f17;
+  --color-green-900: #0b2c21;
+  --color-green-800: #0f3d2e;
+  --color-green-700: #17553f;
+  --color-green-600: #1f6d51;
+  --color-green-100: #dcece5;
+  --color-green-50: #eff7f3;
+
+  --color-volt-500: #d9f24a;
+  --color-volt-600: #c2db32;
+  --color-volt-300: #e8f78f;
+
+  /* Semantic */
+  --background: #faf9f5;
+  --foreground: #10201a;
+
+  --card: #ffffff;
+  --card-foreground: #10201a;
+
+  --primary: var(--color-green-800);
+  --primary-hover: var(--color-green-700);
+  --on-primary: #ffffff;
+
+  --accent: var(--color-volt-500);
+  --accent-hover: var(--color-volt-600);
+  --on-accent: #0a0f0d;
+
+  --muted: #eceae4;
+  --muted-foreground: #5a6360;
+
+  --border: #e2e0d8;
+  --ring: var(--color-green-700);
+
+  --destructive: #b91c1c;
+  --on-destructive: #ffffff;
+  --destructive-soft: #fef2f2;
+
+  --success: #15803d;
+  --warning: #a16207;
+  --warning-soft: #fefce8;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-on-primary: var(--on-primary);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-on-accent: var(--on-accent);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-ring: var(--ring);
+  --color-destructive: var(--destructive);
+  --color-on-destructive: var(--on-destructive);
+  --color-destructive-soft: var(--destructive-soft);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
+
+  --color-green-950: #071f17;
+  --color-green-900: #0b2c21;
+  --color-green-800: #0f3d2e;
+  --color-green-700: #17553f;
+  --color-green-600: #1f6d51;
+  --color-green-100: #dcece5;
+  --color-green-50: #eff7f3;
+  --color-volt-500: #d9f24a;
+  --color-volt-600: #c2db32;
+  --color-volt-300: #e8f78f;
+
+  --font-sans: var(--font-barlow);
+  --font-display: var(--font-barlow-condensed);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-barlow), system-ui, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/*
+  body is a flex column, so its children default to min-width:auto and refuse to
+  shrink below their content. Without this, the admin grid's min-w-[720px] pushes
+  the entire page sideways on a phone instead of scrolling inside its own
+  overflow-x-auto container.
+*/
+body > * {
+  min-width: 0;
+}
+
+/* Condensed athletic display face for headings and numerals in the grid. */
+.font-display {
+  font-family: var(--font-barlow-condensed), system-ui, sans-serif;
+  letter-spacing: 0.01em;
+}
+
+/* Prices and times sit in columns — keep the digits from jittering. */
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Horizontal day strip: snap each chip, hide the scrollbar chrome. */
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+@keyframes slot-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes sheet-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: none;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-slot-in {
+  animation: slot-in 320ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+.animate-sheet-up {
+  animation: sheet-up 260ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.animate-fade-in {
+  animation: fade-in 200ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .animate-slot-in,
+  .animate-sheet-up,
+  .animate-fade-in {
+    animation: none;
+  }
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+  }
 }
