@@ -2,52 +2,72 @@
 
 /*
   Padel House — design tokens.
-  Palette adapted from the club's own identity ("zelena zona", specialty coffee,
-  premium event prostor): deep court green + padel-ball volt on warm off-white.
-  Components consume the semantic tokens below, never raw hex.
+
+  Four colours, strict roles. Ink and bone carry the page; green is the brand
+  ground; volt is an accent used at most once per viewport — on the one thing
+  you want tapped. The moment volt becomes a background for several blocks at
+  once it stops signalling anything and the page reads like a template.
 */
 :root {
   /* Brand */
-  --color-green-950: #071f17;
-  --color-green-900: #0b2c21;
-  --color-green-800: #0f3d2e;
-  --color-green-700: #17553f;
-  --color-green-600: #1f6d51;
-  --color-green-100: #dcece5;
-  --color-green-50: #eff7f3;
+  --color-green-950: #06170f;
+  --color-green-900: #0a2618;
+  --color-green-800: #0e3623;
+  --color-green-700: #164a31;
+  --color-green-600: #216044;
+  --color-green-100: #d6e6dc;
+  --color-green-50: #eef5f0;
 
-  --color-volt-500: #d9f24a;
-  --color-volt-600: #c2db32;
-  --color-volt-300: #e8f78f;
+  /*
+    Clay, taken off the court itself. The original lime accent appeared nowhere
+    in the venue — the club reads deep green, terracotta and warm wood, so the
+    accent comes from the surface people actually play on.
+  */
+  --color-clay-600: #963d24;
+  --color-clay-500: #b0492d;
+  --color-clay-400: #c85c3c;
+  --color-clay-300: #dc9377;
+  --color-clay-100: #f2ded4;
+
+  /* Warm neutrals — bone, not grey. Keeps the club feeling like a room. */
+  --color-bone-50: #faf8f3;
+  --color-bone-100: #f2efe6;
+  --color-bone-200: #e6e1d4;
+  --color-bone-300: #d5cebc;
+
+  /* Wood slats on the pavilion — used sparingly, for warmth on dark panels. */
+  --color-wood-400: #c89257;
+  --color-wood-200: #e4c9a3;
 
   /* Semantic */
-  --background: #faf9f5;
-  --foreground: #10201a;
+  --background: var(--color-bone-50);
+  --foreground: #131a15;
 
   --card: #ffffff;
-  --card-foreground: #10201a;
+  --card-foreground: #131a15;
 
   --primary: var(--color-green-800);
   --primary-hover: var(--color-green-700);
   --on-primary: #ffffff;
 
-  --accent: var(--color-volt-500);
-  --accent-hover: var(--color-volt-600);
-  --on-accent: #0a0f0d;
+  --accent: var(--color-clay-500);
+  --accent-hover: var(--color-clay-400);
+  --on-accent: #ffffff;
 
-  --muted: #eceae4;
-  --muted-foreground: #5a6360;
+  --muted: var(--color-bone-100);
+  --muted-foreground: #6b7168;
 
-  --border: #e2e0d8;
+  --border: var(--color-bone-200);
+  --rule: #ded8ca;
   --ring: var(--color-green-700);
 
-  --destructive: #b91c1c;
+  --destructive: #a92e26;
   --on-destructive: #ffffff;
-  --destructive-soft: #fef2f2;
+  --destructive-soft: #fbf1ef;
 
-  --success: #15803d;
-  --warning: #a16207;
-  --warning-soft: #fefce8;
+  --success: #2c6a45;
+  --warning: #8a6420;
+  --warning-soft: #faf4e6;
 }
 
 @theme inline {
@@ -64,6 +84,7 @@
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
   --color-border: var(--border);
+  --color-rule: var(--rule);
   --color-ring: var(--ring);
   --color-destructive: var(--destructive);
   --color-on-destructive: var(--on-destructive);
@@ -72,19 +93,27 @@
   --color-warning: var(--warning);
   --color-warning-soft: var(--warning-soft);
 
-  --color-green-950: #071f17;
-  --color-green-900: #0b2c21;
-  --color-green-800: #0f3d2e;
-  --color-green-700: #17553f;
-  --color-green-600: #1f6d51;
-  --color-green-100: #dcece5;
-  --color-green-50: #eff7f3;
-  --color-volt-500: #d9f24a;
-  --color-volt-600: #c2db32;
-  --color-volt-300: #e8f78f;
+  --color-green-950: #06170f;
+  --color-green-900: #0a2618;
+  --color-green-800: #0e3623;
+  --color-green-700: #164a31;
+  --color-green-600: #216044;
+  --color-green-100: #d6e6dc;
+  --color-green-50: #eef5f0;
+  --color-clay-600: #963d24;
+  --color-clay-500: #b0492d;
+  --color-clay-400: #c85c3c;
+  --color-clay-300: #dc9377;
+  --color-clay-100: #f2ded4;
+  --color-bone-50: #faf8f3;
+  --color-bone-100: #f2efe6;
+  --color-bone-200: #e6e1d4;
+  --color-bone-300: #d5cebc;
+  --color-wood-400: #c89257;
+  --color-wood-200: #e4c9a3;
 
   --font-sans: var(--font-barlow);
-  --font-display: var(--font-barlow-condensed);
+  --font-serif: var(--font-display);
 }
 
 html {
@@ -108,15 +137,37 @@ body > * {
   min-width: 0;
 }
 
-/* Condensed athletic display face for headings and numerals in the grid. */
+/*
+  Editorial display face. Set at normal weight with tight tracking and short
+  leading — a serif at 300–400 reads as considered, the same serif at 700 reads
+  as a poster. SOFT/WONK soften the terminals so it feels like a room rather
+  than a law firm.
+*/
 .font-display {
-  font-family: var(--font-barlow-condensed), system-ui, sans-serif;
-  letter-spacing: 0.01em;
+  font-family: var(--font-display), Georgia, serif;
+  font-variation-settings: "SOFT" 30, "WONK" 1;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1.02;
+}
+
+/* Small all-caps labels that give the page its editorial scaffolding. */
+.eyebrow {
+  font-family: var(--font-barlow), system-ui, sans-serif;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
 }
 
 /* Prices and times sit in columns — keep the digits from jittering. */
 .tabular {
   font-variant-numeric: tabular-nums;
+}
+
+/* Hairline rules do a lot of the editorial work; keep them one weight. */
+.rule-t {
+  border-top: 1px solid var(--rule);
 }
 
 /* Horizontal day strip: snap each chip, hide the scrollbar chrome. */
@@ -137,6 +188,42 @@ body > * {
     opacity: 1;
     transform: none;
   }
+}
+
+/*
+  Editorial reveal: a short rise out of a slight blur. Cheap (opacity/transform/
+  filter only), and subtle enough that it reads as the page settling rather than
+  as an animation demanding attention.
+*/
+@keyframes reveal {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+    filter: blur(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    filter: blur(0);
+  }
+}
+
+.reveal {
+  animation: reveal 700ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
+/* Slow drift on the hero photograph — the only thing moving above the fold. */
+@keyframes kenburns {
+  from {
+    transform: scale(1.06) translate3d(0, 0, 0);
+  }
+  to {
+    transform: scale(1.14) translate3d(0, -1.5%, 0);
+  }
+}
+
+.animate-kenburns {
+  animation: kenburns 24s ease-out forwards;
 }
 
 @keyframes sheet-up {
@@ -173,7 +260,9 @@ body > * {
   }
   .animate-slot-in,
   .animate-sheet-up,
-  .animate-fade-in {
+  .animate-fade-in,
+  .animate-kenburns,
+  .reveal {
     animation: none;
   }
   *,

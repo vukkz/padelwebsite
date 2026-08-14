@@ -18,7 +18,7 @@ export function AdminNav() {
   return (
     <header className="sticky top-0 z-30 border-b border-border bg-green-900 text-white">
       <div className="mx-auto flex h-14 max-w-6xl items-center gap-4 px-4">
-        <span className="font-display text-base font-bold tracking-tight">
+        <span className="text-base font-bold tracking-tight">
           {CLUB.name}
           <span className="ml-1.5 rounded bg-accent px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-on-accent">
             Admin

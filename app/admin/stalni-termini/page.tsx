@@ -103,7 +103,7 @@ export default async function RecurringPage() {
   return (
     <main className="mx-auto w-full max-w-6xl flex-1 px-4 pb-16">
       <div className="pt-5">
-        <h1 className="font-display text-2xl font-bold tracking-tight">Stalni termini</h1>
+        <h1 className="text-2xl font-bold tracking-tight">Stalni termini</h1>
         <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
           Nedeljni termini koji se automatski ponavljaju. Kreirajte jednom za ceo period — svi
           termini se posle brišu ili produžavaju jednim klikom, bez prolaska kroz kalendar.

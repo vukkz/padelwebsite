@@ -147,7 +147,15 @@ const RecurringInput = z.object({
   reason: z.string().trim().min(2, "Unesite naziv termina.").max(120),
 });
 
+/**
+ * The preview only answers "which dates would this create?", which the label
+ * has no bearing on. Validating `reason` here would make the preview fail while
+ * the owner is still choosing a day — before they have typed a name at all.
+ */
+const RecurringPreviewInput = RecurringInput.omit({ reason: true });
+
 export type RecurringInputShape = z.input<typeof RecurringInput>;
+export type RecurringPreviewShape = z.input<typeof RecurringPreviewInput>;
 
 export type RecurringPreview = {
   ok: boolean;
@@ -159,11 +167,11 @@ export type RecurringPreview = {
 
 /** Dry run: how many occurrences, and which of them clash with real bookings. */
 export async function previewRecurringAction(
-  input: RecurringInputShape,
+  input: RecurringPreviewShape,
 ): Promise<RecurringPreview> {
   await assertAdmin();
 
-  const parsed = RecurringInput.safeParse(input);
+  const parsed = RecurringPreviewInput.safeParse(input);
   if (!parsed.success) {
     return {
       ok: false,

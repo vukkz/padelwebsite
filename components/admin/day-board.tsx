@@ -93,7 +93,7 @@ export function DayBoard({
           {courts.map((c) => (
             <div
               key={c.id}
-              className="font-display rounded-xl bg-primary px-3 py-2 text-center text-base font-semibold text-on-primary"
+              className="rounded-xl bg-primary px-3 py-2 text-center text-base font-semibold text-on-primary"
             >
               {c.name}
             </div>
@@ -101,7 +101,7 @@ export function DayBoard({
 
           {times.map((time, rowIdx) => (
             <div key={time} className="contents">
-              <div className="font-display tabular flex items-start justify-end pr-1 pt-3 text-sm font-semibold text-muted-foreground">
+              <div className="tabular flex items-start justify-end pr-1 pt-3 text-sm font-semibold text-muted-foreground">
                 {time}
               </div>
               {courts.map((court) => {
@@ -310,7 +310,7 @@ function BlockDialog({
         className="animate-sheet-up relative w-full max-w-sm space-y-4 rounded-t-3xl bg-card p-5 shadow-2xl sm:rounded-2xl"
       >
         <div>
-          <h2 id="block-title" className="font-display text-lg font-bold">
+          <h2 id="block-title" className="text-lg font-bold">
             Blokiraj termin
           </h2>
           <p className="text-sm text-muted-foreground">

@@ -13,7 +13,7 @@ export const SLOT_STATE = {
     label: "Slobodno",
     icon: Check,
     className:
-      "border-primary/25 bg-card text-foreground hover:border-primary hover:bg-green-50 hover:shadow-md cursor-pointer active:scale-[0.99]",
+      "border-primary/25 bg-card text-foreground hover:border-clay-500 hover:bg-clay-100/40 hover:shadow-md cursor-pointer active:scale-[0.99]",
     iconClassName: "text-success",
   },
   taken: {

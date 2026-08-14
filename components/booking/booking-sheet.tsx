@@ -145,7 +145,7 @@ export function BookingSheet({
 
         <div className="flex items-start justify-between gap-3 px-5 pt-4">
           <div>
-            <h2 id="sheet-title" className="font-display text-xl font-bold">
+            <h2 id="sheet-title" className="text-xl font-bold">
               Rezervacija termina
             </h2>
             <p className="mt-0.5 text-sm capitalize text-muted-foreground">{dateLabel}</p>
@@ -163,10 +163,10 @@ export function BookingSheet({
         <div className="mx-5 mt-4 rounded-2xl bg-green-50 px-4 py-3">
           <div className="flex items-center justify-between gap-3">
             <div>
-              <p className="font-display text-lg font-semibold text-primary">{courtName}</p>
+              <p className="text-lg font-semibold text-primary">{courtName}</p>
               <p className="tabular text-sm text-primary/80">{timeRange}</p>
             </div>
-            <p className="tabular font-display text-2xl font-bold text-primary">
+            <p className="tabular text-2xl font-bold text-primary">
               {cell.priceRsd.toLocaleString("sr-RS")}
               <span className="ml-1 text-xs font-medium">RSD</span>
             </p>

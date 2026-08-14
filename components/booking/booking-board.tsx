@@ -41,7 +41,7 @@ export function BookingBoard({
   return (
     <>
       <div className="flex items-baseline justify-between gap-3 pt-5">
-        <h2 className="font-display text-xl font-semibold capitalize">{dateLabel}</h2>
+        <h2 className="text-xl font-semibold capitalize">{dateLabel}</h2>
         <p className="shrink-0 text-sm text-muted-foreground">
           {freeCount > 0 ? (
             <>
@@ -58,7 +58,7 @@ export function BookingBoard({
       <div className="mt-4 space-y-6 md:hidden">
         {courts.map((court, courtIdx) => (
           <section key={court.id}>
-            <h3 className="font-display mb-2 text-base font-semibold tracking-wide text-primary">
+            <h3 className="mb-2 text-base font-semibold tracking-wide text-primary">
               {court.name}
             </h3>
             <ul className="space-y-2">
@@ -88,7 +88,7 @@ export function BookingBoard({
                         aria-hidden="true"
                       />
                       <span className="min-w-0 flex-1">
-                        <span className="font-display tabular block text-lg font-semibold leading-tight">
+                        <span className="tabular block text-lg font-semibold leading-tight">
                           {cell.time}
                           <span className="ml-1.5 text-sm font-normal text-muted-foreground">
                             – {endTime(cell)}
@@ -134,7 +134,7 @@ export function BookingBoard({
           {courts.map((court) => (
             <div
               key={court.id}
-              className="font-display rounded-xl bg-primary px-3 py-2 text-center text-base font-semibold text-on-primary"
+              className="rounded-xl bg-primary px-3 py-2 text-center text-base font-semibold text-on-primary"
             >
               {court.name}
             </div>
@@ -183,7 +183,7 @@ function Row({
 }) {
   return (
     <>
-      <div className="font-display tabular flex items-center justify-end pr-1 text-sm font-semibold text-muted-foreground">
+      <div className="tabular flex items-center justify-end pr-1 text-sm font-semibold text-muted-foreground">
         {time}
       </div>
       {courts.map((court) => {
@@ -250,7 +250,7 @@ function SuccessScreen({ data, onReset }: { data: BookingSuccess; onReset: () =>
           <CalendarCheck className="size-8 text-on-accent" aria-hidden="true" />
         </div>
 
-        <h2 className="font-display mt-5 text-2xl font-bold">Termin je rezervisan</h2>
+        <h2 className="mt-5 text-2xl font-bold">Termin je rezervisan</h2>
         <p className="mt-1.5 text-sm text-muted-foreground">
           Vidimo se na terenu, {data.customerName.split(" ")[0]}.
         </p>

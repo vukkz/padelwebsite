@@ -120,7 +120,7 @@ export default async function AdminDayPage({ searchParams }: PageProps<"/admin">
         </div>
 
         <div className="min-w-0">
-          <h1 className="font-display truncate text-xl font-bold capitalize sm:text-2xl">
+          <h1 className="truncate text-xl font-bold capitalize sm:text-2xl">
             {longDateLabel(dateStr)}
           </h1>
           {dateStr !== today && (
@@ -174,7 +174,7 @@ export default async function AdminDayPage({ searchParams }: PageProps<"/admin">
           <Repeat className="size-5 text-on-primary" aria-hidden="true" />
         </div>
         <div className="min-w-0 flex-1">
-          <p className="font-display font-semibold">Stalni termini</p>
+          <p className="font-semibold">Stalni termini</p>
           <p className="text-sm text-muted-foreground">
             Kreiraj i upravljaj nedeljnim terminima na svim terenima
           </p>
@@ -199,7 +199,7 @@ function Stat({
       <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{label}</p>
       <p
         className={
-          "font-display tabular mt-0.5 text-xl font-bold " +
+          "tabular mt-0.5 text-xl font-bold " +
           (tone === "primary" ? "text-primary" : tone === "accent" ? "text-success" : "")
         }
       >

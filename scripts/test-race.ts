@@ -46,6 +46,18 @@ async function main() {
   }
   const court = courts[0];
 
+  // This test drives the real HTTP endpoint, so the dev server has to be up.
+  // Without this check the failure surfaces as an opaque fetch error.
+  try {
+    await fetch(BASE, { method: "HEAD" });
+  } catch {
+    console.error(
+      `\n  Server nije pokrenut na ${BASE}.\n` +
+        "  Pokrenite `npm run dev` u drugom terminalu, pa ponovite `npm run race`.\n",
+    );
+    process.exit(1);
+  }
+
   console.log(`\nMeta: ${court.name}, ${formatBelgrade(startsAt, "EEEE dd.MM.yyyy.")} u ${time}`);
   console.log(`Čistim slot i šaljem ${PARALLEL} istovremenih zahteva…\n`);
 

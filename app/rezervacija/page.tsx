@@ -65,7 +65,7 @@ export default async function BookingPage({
       <SiteHeader back />
       <main className="mx-auto w-full max-w-5xl flex-1 px-4 pb-20">
         <div className="pt-5">
-          <h1 className="font-display text-2xl font-bold tracking-tight sm:text-3xl">
+          <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
             Rezerviši termin
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">

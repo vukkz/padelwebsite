@@ -36,7 +36,7 @@ export default async function LoginPage({ searchParams }: PageProps<"/admin/prij
           <div className="mx-auto flex size-12 items-center justify-center rounded-2xl bg-primary">
             <KeyRound className="size-6 text-on-primary" aria-hidden="true" />
           </div>
-          <h1 className="font-display mt-4 text-2xl font-bold">Admin panel</h1>
+          <h1 className="mt-4 text-2xl font-bold">Admin panel</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             {CLUB.name} {CLUB.city}
           </p>

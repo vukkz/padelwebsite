@@ -121,7 +121,7 @@ function CreateForm({
   // `reason` is deliberately excluded: it doesn't affect which dates get
   // created, so typing a name shouldn't re-run the preview on every keystroke.
   const schedule = useMemo(
-    () => ({ courtId, weekday, time, fromDate, toDate, reason: "—" }),
+    () => ({ courtId, weekday, time, fromDate, toDate }),
     [courtId, weekday, time, fromDate, toDate],
   );
 
@@ -188,7 +188,7 @@ function CreateForm({
         <div className="flex size-9 items-center justify-center rounded-xl bg-primary">
           <CalendarPlus className="size-4.5 text-on-primary" aria-hidden="true" />
         </div>
-        <h2 className="font-display text-lg font-bold">Novi stalni termin</h2>
+        <h2 className="text-lg font-bold">Novi stalni termin</h2>
       </div>
 
       <Field label="Teren" htmlFor="teren" required>
@@ -389,7 +389,7 @@ function SeriesList({
         <div className="mx-auto flex size-12 items-center justify-center rounded-2xl bg-muted">
           <CalendarRange className="size-6 text-muted-foreground" aria-hidden="true" />
         </div>
-        <h3 className="font-display mt-3 text-lg font-semibold">Još nema stalnih termina</h3>
+        <h3 className="mt-3 text-lg font-semibold">Još nema stalnih termina</h3>
         <p className="mx-auto mt-1 max-w-sm text-sm text-muted-foreground">
           Kreirajte prvi nedeljni termin sa leve strane. Svi termini iz jedne serije se posle
           brišu ili produžavaju jednim klikom.
@@ -400,7 +400,7 @@ function SeriesList({
 
   return (
     <div className="space-y-3">
-      <h2 className="font-display text-lg font-bold">
+      <h2 className="text-lg font-bold">
         Aktivne serije{" "}
         <span className="tabular text-sm font-medium text-muted-foreground">
           ({series.length})
@@ -460,7 +460,7 @@ function SeriesCard({
         </div>
 
         <div className="min-w-0 flex-1">
-          <h3 className="font-display truncate text-base font-semibold">{s.reason}</h3>
+          <h3 className="truncate text-base font-semibold">{s.reason}</h3>
           <p className="mt-0.5 text-sm text-muted-foreground">
             <span className="font-medium text-foreground">{s.courtName}</span> ·{" "}
             {s.weekdayLabel} · <span className="tabular">{s.timeRange}</span>

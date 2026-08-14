@@ -1,6 +1,8 @@
 # Padel House Beograd — rezervacije
 
-Web aplikacija za rezervaciju padel terena: javna stranica sa rezervacijom u realnom vremenu i admin panel za vođenje rasporeda — uključujući **stalne termine**, koji su i glavni razlog zašto ovo postoji.
+Sajt i sistem rezervacija za Padel House — teren, kafe i prostor za događaje u šancu Beogradske tvrđave na Kalemegdanu.
+
+Javna stranica sa rezervacijom u realnom vremenu i admin panel za vođenje rasporeda — uključujući **stalne termine**, koji su i glavni razlog zašto ovo postoji.
 
 Next.js (App Router) · TypeScript · Tailwind v4 · Supabase (Postgres) · Resend · Vercel
 
@@ -71,11 +73,27 @@ npm run dev
 npm run verify      # vreme/cene + šema baze; ne traži Supabase ni internet
 npm run verify:time # DST, peak/off-peak, latinica, validacija mreže termina
 npm run verify:db   # primenjuje migraciju na pravi Postgres (PGlite) i testira ograničenja
-npm run race        # 10 istovremenih zahteva za isti termin (traži pokrenut `npm run dev`)
 npm run lint && npm run build
 ```
 
-`npm run race` je ključni test cele aplikacije: očekivani rezultat je **tačno jedan 201 i devet 409**.
+### Test trke (`npm run race`)
+
+Ključni test cele aplikacije. Gađa **pravi HTTP endpoint**, pa mu treba pokrenut server — u **dva terminala**:
+
+```bash
+npm run dev     # terminal 1 — ostavite da radi
+npm run race    # terminal 2
+```
+
+Očekivani rezultat je **tačno jedan 201 i devet 409**:
+
+```
+  201 Created:     1   (očekivano 1)
+  409 Conflict:    9   (očekivano 9)
+  redova u bazi:   1   (očekivano 1)
+
+✓ PROŠAO — baza je propustila tačno jednu rezervaciju.
+```
 
 ---
 
@@ -155,14 +173,32 @@ Za mejlove sa sopstvenog domena verifikujte domen u Resend-u i promenite `RESEND
 
 ---
 
+## Fotografije
+
+Originali stoje u `img/`, a `public/photos/` sadrži obrađene verzije (resize, EXIF strip, AVIF + JPEG):
+
+```bash
+node scripts/prepare-photos.mjs
+```
+
+Mapiranje izvorne datoteke na imenovano mesto u layoutu je na vrhu tog skripta — nove slike se dodaju tako što se ubace u `img/` i doda red u `MAP`, bez diranja komponenti.
+
+## Dizajn
+
+- **Fraunces** (serif) nosi sve naslove — prati serifni logotip kluba i ima pun `latin-ext`, pa `č ć š ž đ` rade ispravno.
+- **Barlow** nosi telo teksta i ceo interfejs rezervacija i admina. Serif je glas brenda, sans je interfejs.
+- Paleta je uzeta sa samog objekta: tamnozelena iz logotipa, **terakota sa terena** kao akcenat, bež i toplo drvo. Akcenat se koristi najviše jednom po ekranu — na onome što treba kliknuti.
+
 ## Pre prezentacije
 
-Sve je u [`lib/config.ts`](lib/config.ts) osim fotografije:
+- [ ] Potvrditi adresu — `Tadeuša Košćuška BB` je sa njihovog Google profila; „BB" znači bez broja.
+- [ ] Potvrditi **cene** — 4.000 / 5.000 RSD su procena tržišta, ne njihov cenovnik.
+- [ ] Potvrditi nazive terena (`Teren 1/2/3`) i email kluba (`CLUB.email`).
+- [ ] Osvežiti recenzije u `lib/config.ts` sa Google profila pre prezentacije.
 
-- [ ] **Tačna adresa** — trenutno `"Beograd, Srbija"` sa napomenom. Nije javno dostupna, treba je uneti ručno.
-- [ ] **Fotografija kluba** za hero — trenutno je ilustracija `public/hero-padel.svg`. Zameniti pravom slikom terena.
-- [ ] Potvrditi nazive terena (`Teren 1/2/3`) i radno vreme.
-- [ ] Potvrditi email kluba (`CLUB.email`).
+### Radno vreme vs. termini
+
+Objekat radi **08:00 – 18:00**. Padel mreža je zasebna: šest termina od 90 minuta koji se ređaju od 08:00 i završavaju u 17:00, pa kafe radi još sat vremena posle poslednjeg meča. Za venčanja i proslave se radi i duže, po dogovoru — to se ne vodi kroz rezervacije nego kroz `blocked_slots` u adminu.
 
 ---
 

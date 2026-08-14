@@ -61,7 +61,7 @@ export function DateStrip({ days, selected }: { days: DayChip[]; selected: strin
             >
               {d.isToday ? "Danas" : d.weekday}
             </span>
-            <span className="font-display tabular text-lg font-semibold leading-tight">
+            <span className="tabular text-lg font-semibold leading-tight">
               {d.day}
             </span>
             {/* Weekend = peak pricing. Marked with a dot AND announced in text
