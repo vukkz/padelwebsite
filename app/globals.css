@@ -37,15 +37,6 @@
   */
   --terracotta: #b04a2c;
   --terracotta-deep: #8f3a20;
-  /*
-    The same hue lifted for use on --shade, where the base accent is unusable:
-    #b04a2c over #17120b measures 3.02:1, and the hero dateline is small caps,
-    so it needs the 4.5:1 rule rather than the 3:1 large-text one.
-
-    This is a tint of --terracotta, not a second accent — h 14deg, s 60%, held
-    from the base and lightened to 68%. Measures 7.6:1 on --shade.
-  */
-  --terracotta-light: #dd9478;
 
   /* Pavilion wood, for warmth on dark panels. */
   --wood: #b08356;
@@ -103,7 +94,6 @@
   --color-cream-deep: var(--cream-deep);
   --color-terracotta: var(--terracotta);
   --color-terracotta-deep: var(--terracotta-deep);
-  --color-terracotta-light: var(--terracotta-light);
   --color-wood: var(--wood);
   --color-shade: var(--shade);
   --color-ink: var(--ink);

@@ -58,7 +58,7 @@ export function PageHero({
   return (
     <section
       className={[
-        "relative isolate flex flex-col overflow-hidden bg-shade",
+        "relative isolate flex flex-col overflow-hidden bg-green-dark",
         tall ? "min-h-[92svh]" : "min-h-[76svh]",
       ].join(" ")}
     >
@@ -81,65 +81,51 @@ export function PageHero({
         />
         {/*
           Vignette, so the frame has a centre and the edges recede. Down from
-          0.62 to 0.25: at full strength it stacked with the scrims below and
-          the three together turned a golden-hour frame into brown murk.
+          0.62 and retinted green with the scrims: at full strength it stacked
+          with them and turned the frame to murk.
         */}
         <div
           aria-hidden="true"
-          className="absolute inset-0 bg-[radial-gradient(ellipse_at_48%_46%,transparent_28%,rgba(23,18,11,0.25)_100%)]"
+          className="absolute inset-0 bg-[radial-gradient(ellipse_at_48%_46%,transparent_28%,rgba(2,48,26,0.30)_100%)]"
         />
       </div>
 
       {/*
-        Scrims, all --shade rather than the old cold green.
+        Scrims in --green-dark, not a neutral.
 
-        Bottom-up carries the type block. Left-to-right takes the edge off the
-        text column. The top band exists because the header's links sit over
-        open sky on every one of these frames and measured ~1.4:1 unscrimmed.
+        The green is the brand doing the work a neutral scrim cannot. Under a
+        warm brown wash the whole hero sat in one family and the terracotta
+        action sank into it; under green, terracotta is the only warm thing on
+        the screen and the button reads as the single place to press. That is
+        also the palette rule this project already states — accent once per
+        screen, on the thing to be clicked — which the previous hero broke by
+        spending terracotta on the dateline as well as the button.
 
-        These values were measured, not guessed, by replaying the whole pipeline
-        offline — crop, the CSS filter chain, the multiply wash, vignette, every
-        scrim — and sampling worst-case pixel contrast under the real type boxes
-        at both ends of the drift animation. Two things came out of that:
+        The warm multiply wash above survives deliberately. Without it the brick
+        of the bastion goes green-grey and the frame reads as a colour filter
+        rather than a photograph; with it, the masonry keeps its own material
+        and only the field around it turns green.
 
-        1. The first pass (opaque bottom, 0.80 left edge, 0.62 vignette) was
-           roughly 2x past what AA needs and stacked into brown murk, erasing
-           the left-hand figure — the whole reason that photograph was chosen.
-        2. The short heroes need a different ramp, not the same one. Their type
-           sits higher in a 76svh frame than it does in a 92svh one, above where
-           a bottom-up gradient has any strength left; /padel's dateline came
-           out at 2.68:1 and /dogadjaji's headline at 2.68:1 on the tall values.
-           Hence the flat veil and the taller ramp below.
+        Bottom-up carries the type. Left-to-right holds the text column, and is
+        much stronger here than the previous photograph needed — the bastion is
+        sunlit brick where players-three was shadow. The top band exists because
+        the header's links sit over open sky on every one of these frames.
 
-        Worst case now, across both drift keyframes: home 5.53 on the dateline
-        (the binding one) and 5.93 on the headline; /padel 4.91, /kafa 6.79,
-        /dogadjaji 5.42. The dateline is always the first thing to fail — it is
-        11px caps, so it answers to 4.5:1, not the headline's 3:1.
+        Values are measured, not guessed: the whole pipeline is replayed offline
+        (crop, CSS filter chain, multiply wash, vignette, scrims) and worst-case
+        pixel contrast sampled under the real type boxes at both ends of drift.
       */}
-      {tall ? null : (
-        <div aria-hidden="true" className="absolute inset-0 -z-10 bg-shade/10" />
-      )}
       <div
         aria-hidden="true"
-        className={[
-          "absolute inset-0 -z-10 bg-gradient-to-t",
-          tall
-            ? "from-shade/92 via-shade/60 via-56% to-transparent"
-            : "from-shade/94 via-shade/66 via-70% to-shade/20",
-        ].join(" ")}
+        className="absolute inset-0 -z-10 bg-gradient-to-t from-green-dark/95 via-green-dark/66 via-62% to-green-dark/6"
       />
       <div
         aria-hidden="true"
-        className={[
-          "absolute inset-0 -z-10 bg-gradient-to-r",
-          tall
-            ? "from-shade/30 via-shade/5 via-28% to-transparent"
-            : "from-shade/35 via-shade/8 via-30% to-shade/2",
-        ].join(" ")}
+        className="absolute inset-0 -z-10 bg-gradient-to-r from-green-dark/80 via-green-dark/16 via-42% to-transparent"
       />
       <div
         aria-hidden="true"
-        className="absolute inset-x-0 top-0 -z-10 h-32 bg-gradient-to-b from-shade/70 to-transparent"
+        className="absolute inset-x-0 top-0 -z-10 h-32 bg-gradient-to-b from-green-dark/75 to-transparent"
       />
 
       <div className="mx-auto flex w-full max-w-[88rem] flex-1 flex-col justify-end px-5 pb-14 pt-28 sm:px-8 sm:pb-20 lg:pb-24">
@@ -159,11 +145,15 @@ export function PageHero({
           Dateline, under the heading rather than over it. As a kicker above the
           h1 this pre-announced a headline that carries itself, which is the
           single most reliable tell of a generated page; underneath, the same
-          words read as attribution. Terracotta-light, not terracotta: the base
-          accent measures ~3.0:1 on --shade and fails AA outright.
+          words read as attribution.
+
+          Cream, not terracotta. Two reasons, and they agree: a warm accent on a
+          green field measured 4.21:1 and misses AA for 11px caps, and spending
+          terracotta here would put the accent on the screen twice. It belongs
+          on the button alone.
         */}
         <p
-          className="label rise mt-6 text-terracotta-light"
+          className="label rise mt-6 text-cream/80"
           style={{ animationDelay: "140ms" }}
         >
           {label}

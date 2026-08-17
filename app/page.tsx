@@ -34,18 +34,22 @@ export default function HomePage() {
 /* ----------------------------------------------------------------- hero -- */
 
 /*
-	The club's own line, set over the one photograph that shows what is actually
-	being sold: three people on the terracotta court in golden light, the wood
-	pavilion and the fortress wall behind them.
+	The club's own line over the one frame that carries the entire argument at
+	once: the bastion and its sentry turret, the rampart wall, the pavilion with
+	their sign on it, people sitting at café tables, and the court with a game
+	on. Fortress, coffee and padel in a single photograph — which is the whole
+	pitch, and the one thing a competitor down the road cannot copy.
 
-	This frame was tried and rejected in an earlier pass on two grounds, both of
-	which the current composition answers. "Faces in front of the headline" was
-	true of a centred crop; the crop is biased high here so the three faces sit
-	in the upper band and the type occupies the scrimmed floor, which is empty
-	court. "Only a 1440px Instagram export" is the real cost and it stands — but
-	it is a square 1440, and every alternative in the library is a phone frame of
-	an empty court. A slightly softer photograph of people beats a sharp one of
-	nobody on a page whose entire argument is that the venue is the product.
+	Chosen over the posed three-player frame deliberately. That shot argued the
+	opposite of this page: padel first, people first, venue nowhere, with named
+	individuals in front of the reader before the place had been sold. It was
+	also the one 1440px Instagram export among the good frames. This is 2400x3200
+	cut from the sharpest original in the set, and the people in it are incidental
+	rather than posed.
+
+	Composition does the layout work too: the bastion is a dark brick mass down
+	the left third, exactly where the type sits, so the scrim has less to do
+	there than it would over an open frame.
 */
 function Hero() {
 	return (
@@ -54,15 +58,14 @@ function Hero() {
 			label="Kalemegdan · Beograd"
 			title="Nije samo padel"
 			lead="Teren u šancu Beogradske tvrđave, specialty kafa na terasi i prostor za sve što dolazi posle meča. Rezervacija online — bez poziva i bez čekanja."
-			image="/photos/players-three.jpg"
-			alt="Tri igračice sa reketima na terakota terenu ispred paviljona i bedema tvrđave"
+			image="/photos/fortress-court.jpg"
+			alt="Teren, paviljon i terasa Padel House-a u šancu ispod bedema Beogradske tvrđave"
 			/*
-				One value would not serve both. The source is square, so a wide
-				desktop hero fills width and reads only the Y — 26% keeps all three
-				faces above the type. A phone hero fills height and reads only the X,
-				where centring holds the standing figure and both kneeling ones.
+				48% holds the band that has the rampart wall, the pavilion and the top
+				of the court in it. Higher and the frame is sky; lower and it is all
+				court and fence, which is the shot this one replaced.
 			*/
-			crop="object-[50%_22%]"
+			crop="object-[50%_48%]"
 		>
 			<div className="rise mt-10" style={{ animationDelay: "300ms" }}>
 				<ActionLink href="/rezervacija" id="hero-cta">
