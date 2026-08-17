@@ -93,6 +93,33 @@ export async function getDayAvailability(dateStr: string): Promise<DayAvailabili
   return { dateStr, courts: courtsWithCells, freeCount };
 }
 
+/**
+ * The first day in `days` that still has a bookable slot, with its availability.
+ *
+ * Used when someone opens /rezervacija without a date. By late afternoon every
+ * slot for today is in the past, and landing on a grid of greyed-out cells makes
+ * a working booking system look broken — so we open on the next day that can
+ * actually be booked. Today is still one tap away in the date strip.
+ *
+ * Short-circuits on the first hit, which in practice is day 0 or 1. Falls back
+ * to the first day if the whole lookahead window is full.
+ */
+export async function firstOpenDay(
+  days: readonly string[],
+  lookahead = 7,
+): Promise<DayAvailability> {
+  const [first, ...rest] = days;
+  const firstDay = await getDayAvailability(first);
+  if (firstDay.freeCount > 0) return firstDay;
+
+  for (const dateStr of rest.slice(0, lookahead)) {
+    const day = await getDayAvailability(dateStr);
+    if (day.freeCount > 0) return day;
+  }
+
+  return firstDay;
+}
+
 /** Admin day view: full booking rows including customer contact details. */
 export async function getAdminDay(dateStr: string): Promise<{
   courts: Court[];

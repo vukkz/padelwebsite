@@ -10,7 +10,7 @@ export function SetupNotice() {
       <div className="flex size-11 items-center justify-center rounded-xl bg-warning-soft">
         <Database className="size-5 text-warning" aria-hidden="true" />
       </div>
-      <h2 className="font-display mt-4 text-xl font-bold">Baza još nije povezana</h2>
+      <h2 className="font-display mt-4 text-[1.6rem]">Baza još nije povezana</h2>
       <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
         Dodajte <code className="rounded bg-muted px-1.5 py-0.5 text-xs">.env.local</code> sa
         Supabase podacima, pokrenite migraciju iz{" "}

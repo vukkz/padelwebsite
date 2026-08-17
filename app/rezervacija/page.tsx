@@ -1,12 +1,12 @@
 import { redirect } from "next/navigation";
 import type { Metadata } from "next";
-import { SiteHeader } from "@/components/site-header";
+import { SiteFooter, SiteHeader } from "@/components/site-frame";
 import { DateStrip, type DayChip } from "@/components/booking/date-strip";
 import { BookingBoard } from "@/components/booking/booking-board";
 import { SetupNotice } from "@/components/setup-notice";
-import { getDayAvailability } from "@/lib/availability";
+import { firstOpenDay, getDayAvailability } from "@/lib/availability";
 import { isSupabaseConfigured } from "@/lib/supabase";
-import { BOOKING_DAYS_AHEAD } from "@/lib/config";
+import { BOOKING_DAYS_AHEAD, SLOT_MINUTES } from "@/lib/config";
 import {
   belgradeToday,
   dayOfWeekForDateStr,
@@ -30,10 +30,10 @@ export default async function BookingPage({
   const today = belgradeToday();
   const days = nextDays(BOOKING_DAYS_AHEAD, today);
 
-  const requested = typeof params.datum === "string" ? params.datum : today;
+  const explicit = typeof params.datum === "string" ? params.datum : null;
   // Anything outside the bookable window silently falls back to today rather
   // than 404-ing — a stale shared link should still land somewhere useful.
-  if (!days.includes(requested)) redirect("/rezervacija");
+  if (explicit && !days.includes(explicit)) redirect("/rezervacija");
 
   const chips: DayChip[] = days.map((dateStr) => {
     const { weekday, day } = shortDayLabel(dateStr);
@@ -50,43 +50,88 @@ export default async function BookingPage({
   if (!isSupabaseConfigured()) {
     return (
       <>
-        <SiteHeader back />
-        <main className="mx-auto w-full max-w-5xl flex-1 px-4 pb-16">
+        <SiteHeader active="/rezervacija" />
+        <main className="mx-auto w-full max-w-[92rem] flex-1 px-4 pb-16 sm:px-6">
           <SetupNotice />
         </main>
+        <SiteFooter />
       </>
     );
   }
 
-  const availability = await getDayAvailability(requested);
+  // No date in the URL: open on the first day that can actually be booked.
+  // After the last slot starts, today's grid is entirely in the past and a wall
+  // of greyed-out cells reads as a broken system rather than a closed day.
+  const availability = explicit
+    ? await getDayAvailability(explicit)
+    : await firstOpenDay(days);
+  const selected = availability.dateStr;
 
   return (
     <>
-      <SiteHeader back />
-      <main className="mx-auto w-full max-w-5xl flex-1 px-4 pb-20">
-        <div className="pt-5">
-          <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
-            Rezerviši termin
-          </h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Izaberi dan, pa slobodan termin. Potvrda je odmah — bez poziva.
-          </p>
-        </div>
+      <SiteHeader active="/rezervacija" />
+      <main className="flex-1">
+        {/*
+          Operate, not Persuade. The world dresses this surface — the ink field,
+          the spec cells, the square corners — but the grid's job outranks every
+          expressive move on it, so the panel voice stops at the heading and the
+          board itself stays a legible timetable.
+        */}
+        {/*
+          Operate, not Persuade. The brand dresses the opening block — emerald
+          ground, campaign caps, letterspaced labels — and then stops, so the
+          grid below stays a legible timetable rather than a styled one.
+        */}
+        <section className="bg-green text-cream">
+          <div className="mx-auto max-w-[92rem] px-5 py-14 sm:px-8 sm:py-20">
+            <p className="label text-cream/60">Rezervacija</p>
+            <h1 className="display mt-5 text-[2.8rem] sm:text-[4.2rem]">
+              Izaberi termin
+            </h1>
+            <p className="mt-6 max-w-[46ch] text-[16px] leading-relaxed text-cream/85">
+              Cena je za ceo teren po terminu od {SLOT_MINUTES} minuta — ne po igraču.
+              Potvrdu dobijaš odmah na ekranu, bez poziva.
+            </p>
+            <div className="mt-8 flex flex-wrap gap-x-9 gap-y-2">
+              <span className="label text-cream/70">
+                {availability.freeCount} slobodnih termina
+              </span>
+              <span className="label text-cream/70">{longDateLabel(selected)}</span>
+            </div>
+          </div>
+        </section>
 
-        <div className="sticky top-14 z-20 -mx-4 bg-background/95 px-4 pb-2 pt-4 backdrop-blur-md">
-          <DateStrip days={chips} selected={requested} />
-        </div>
+        {/*
+          `min-w-0` at every step down to the day strip.
 
-        <BookingBoard
-          dateLabel={longDateLabel(requested)}
-          courts={availability.courts.map((c) => ({
-            id: c.court.id,
-            name: c.court.name,
-            cells: c.cells,
-          }))}
-          freeCount={availability.freeCount}
-        />
+          The strip is a horizontal scroller holding 14 chips. Without an
+          explicit floor its ancestors size to content instead of to the
+          viewport, the scroller stops clipping, and the whole document grows to
+          1141px on a 390px phone — the strip scrolls the page sideways instead
+          of scrolling inside itself.
+        */}
+        <div className="mx-auto w-full min-w-0 max-w-[92rem] px-4 pb-20 sm:px-6">
+          {/*
+            Opaque, not translucent-with-blur: the page background is a flat
+            colour, so the blur bought nothing and its compositing layer rendered
+            as a faintly visible panel behind the chips.
+          */}
+          <div className="sticky top-16 z-20 -mx-5 min-w-0 border-b border-rule bg-cream px-5 pb-3 pt-4 sm:top-20 sm:-mx-8 sm:px-8">
+            <DateStrip days={chips} selected={selected} />
+          </div>
+
+          <BookingBoard
+            dateLabel={longDateLabel(selected)}
+            courts={availability.courts.map((c) => ({
+              id: c.court.id,
+              name: c.court.name,
+              cells: c.cells,
+            }))}
+            freeCount={availability.freeCount}
+          />
+        </div>
       </main>
+      <SiteFooter />
     </>
   );
 }

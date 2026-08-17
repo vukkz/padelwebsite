@@ -5,6 +5,7 @@ import { AlertCircle, Loader2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Field, Input } from "@/components/ui/field";
 import { cn } from "@/lib/utils";
+import { sentenceCase } from "@/lib/time";
 import type { PublicSlotCell } from "@/lib/types";
 
 export type BookingSuccess = {
@@ -130,10 +131,16 @@ export function BookingSheet({
         className="animate-fade-in absolute inset-0 cursor-default bg-green-950/50 backdrop-blur-[2px]"
       />
 
+      {/*
+        The rise-from-the-bottom animation is the platform sheet idiom on a
+        phone; on desktop the same panel is centred, so it would be sliding in
+        from nowhere. Gate the motion to the breakpoint that earns it.
+      */}
       <div
         ref={panelRef}
         className={cn(
-          "animate-sheet-up relative w-full max-w-md rounded-t-3xl bg-card shadow-2xl sm:rounded-3xl",
+          "animate-sheet-up relative w-full max-w-md rounded-t-lg border border-rule bg-card",
+          "sm:animate-fade-in sm:rounded-sm",
           "max-h-[92vh] overflow-y-auto",
         )}
         style={{ paddingBottom: "max(1.25rem, env(safe-area-inset-bottom))" }}
@@ -145,10 +152,10 @@ export function BookingSheet({
 
         <div className="flex items-start justify-between gap-3 px-5 pt-4">
           <div>
-            <h2 id="sheet-title" className="text-xl font-bold">
+            <h2 id="sheet-title" className="font-display text-[1.6rem]">
               Rezervacija termina
             </h2>
-            <p className="mt-0.5 text-sm capitalize text-muted-foreground">{dateLabel}</p>
+            <p className="mt-1 text-sm text-muted-foreground">{sentenceCase(dateLabel)}</p>
           </div>
           <button
             type="button"
@@ -160,17 +167,15 @@ export function BookingSheet({
           </button>
         </div>
 
-        <div className="mx-5 mt-4 rounded-2xl bg-green-50 px-4 py-3">
-          <div className="flex items-center justify-between gap-3">
-            <div>
-              <p className="text-lg font-semibold text-primary">{courtName}</p>
-              <p className="tabular text-sm text-primary/80">{timeRange}</p>
-            </div>
-            <p className="tabular text-2xl font-bold text-primary">
-              {cell.priceRsd.toLocaleString("sr-RS")}
-              <span className="ml-1 text-xs font-medium">RSD</span>
-            </p>
+        <div className="mx-5 mt-5 flex items-baseline justify-between gap-3 border-y border-rule py-4">
+          <div>
+            <p className="font-display text-[1.35rem] text-foreground">{courtName}</p>
+            <p className="tabular mt-0.5 text-sm text-muted-foreground">{timeRange}</p>
           </div>
+          <p className="font-display tabular text-[1.75rem] text-clay-500">
+            {cell.priceRsd.toLocaleString("sr-RS")}
+            <span className="eyebrow ml-1.5 align-middle text-muted-foreground">rsd</span>
+          </p>
         </div>
 
         <form onSubmit={submit} className="space-y-4 px-5 pb-5 pt-5" noValidate>
@@ -178,7 +183,7 @@ export function BookingSheet({
             <div
               role="alert"
               className={cn(
-                "flex items-start gap-2.5 rounded-xl px-3.5 py-3 text-sm",
+                "flex items-start gap-2.5 rounded-sm px-3.5 py-3 text-sm",
                 taken
                   ? "bg-warning-soft text-warning"
                   : "bg-destructive-soft text-destructive",

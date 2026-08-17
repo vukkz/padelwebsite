@@ -108,6 +108,18 @@ export function longDateLabel(dateStr: string): string {
   return formatBelgrade(belgradeSlotToInstant(dateStr, "12:00"), "EEEE, d. MMMM yyyy.");
 }
 
+/**
+ * Capitalise the first letter only.
+ *
+ * Serbian keeps month names lowercase — "subota, 15. avgust 2026." CSS
+ * `text-transform: capitalize` uppercases *every* word, which turns that into
+ * "Subota, 15. Avgust 2026." and reads as a translation error to a local. Use
+ * this anywhere a date label starts a line.
+ */
+export function sentenceCase(s: string): string {
+  return s.charAt(0).toLocaleUpperCase("sr-RS") + s.slice(1);
+}
+
 /** Start/end instants bounding a Belgrade calendar day — for range queries. */
 export function belgradeDayBounds(dateStr: string): { from: Date; to: Date } {
   const from = belgradeSlotToInstant(dateStr, "00:00");

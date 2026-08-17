@@ -24,8 +24,22 @@ const OUT = "public/photos";
 const MAP = [
   { match: "AHRPTWmEzRnL", name: "fortress-court", width: 2400, note: "aerial court in the fortress moat — hero" },
   { match: "AHRPTWkKoNvx", name: "pavilion-lawn", width: 1600, note: "café pavilion + lounge chairs on the lawn" },
+  // Same source at hero width for /kafa. The 1080px `terrace` frame shows two
+  // chairs and nothing else; this one has the pavilion, the terrace seating and
+  // the whole lounge lawn under the rampart — the café as a place.
+  { match: "AHRPTWkKoNvx", name: "hero-cafe", width: 2268, note: "café pavilion, terrace and lawn — kafa hero" },
   { match: "AHRPTWmZ0czX", name: "court-plaza", width: 1600, note: "court + painted plaza" },
+  // Same source as `court-plaza`, at hero width. The original is 4284×5712 —
+  // the sharpest frame in the set — so the home hero takes all of it rather
+  // than the 1600px card render.
+  { match: "AHRPTWmZ0czX", name: "hero-court", width: 3000, note: "court, fence and fortress wall — home hero" },
   { match: "AHRPTWmH0HoD", name: "drinks", width: 1400, note: "drinks tray with rackets" },
+  // Same source as `drinks`, kept at full width for the home hero. The 1400px
+  // version is sized for a card and goes soft across half a viewport. The
+  // source is now an upscaled 3000×4000, so this takes all of it: the hero
+  // column runs ~55vw, which is past 2000px of device pixels on a retina
+  // laptop, and this is the one image the pitch opens on.
+  { match: "AHRPTWmH0HoD", name: "hero-drinks", width: 3000, note: "drinks + rackets, golden hour — home hero" },
   { match: "587409052", name: "rackets-bench", width: 1400, note: "rackets on the bench, golden hour" },
   { match: "589173466", name: "players-three", width: 1600, note: "three players, golden hour" },
   { match: "599530694", name: "player-serve", width: 1600, note: "player serving in front of the pavilion" },

@@ -3,10 +3,11 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { CalendarCheck, ChevronRight, MapPin, Phone } from "lucide-react";
+import { ArrowUpRight, Check, ChevronRight, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { CLUB } from "@/lib/config";
+import { sentenceCase } from "@/lib/time";
 import type { PublicSlotCell } from "@/lib/types";
 import { SLOT_STATE } from "./slot-styles";
 import { BookingSheet, type BookingSuccess } from "./booking-sheet";
@@ -40,28 +41,33 @@ export function BookingBoard({
 
   return (
     <>
-      <div className="flex items-baseline justify-between gap-3 pt-5">
-        <h2 className="text-xl font-semibold capitalize">{dateLabel}</h2>
-        <p className="shrink-0 text-sm text-muted-foreground">
+      {/*
+        The free count is the one number a visitor is looking for, so it sits
+        under the date in the accent colour rather than as grey micro-copy in
+        the far corner.
+      */}
+      <div className="rule-t mt-8 pt-7">
+        <h2 className="font-display text-[1.75rem] text-foreground sm:text-[2rem]">
+          {sentenceCase(dateLabel)}
+        </h2>
+        <p className="mt-1.5 text-[15px] text-muted-foreground">
           {freeCount > 0 ? (
             <>
-              <span className="font-semibold text-success tabular">{freeCount}</span>{" "}
-              slobodnih
+              <span className="tabular font-semibold text-clay-500">{freeCount}</span>{" "}
+              {freeCount === 1 ? "slobodan termin" : "slobodnih termina"}
             </>
           ) : (
-            "Nema slobodnih termina"
+            "Nema slobodnih termina — probaj sledeći dan."
           )}
         </p>
       </div>
 
       {/* ---------------- Mobile: one section per court ---------------- */}
-      <div className="mt-4 space-y-6 md:hidden">
+      <div className="mt-8 space-y-8 md:hidden">
         {courts.map((court, courtIdx) => (
           <section key={court.id}>
-            <h3 className="mb-2 text-base font-semibold tracking-wide text-primary">
-              {court.name}
-            </h3>
-            <ul className="space-y-2">
+            <h3 className="eyebrow rule-t pt-3 text-muted-foreground">{court.name}</h3>
+            <ul className="mt-3 space-y-2">
               {court.cells.map((cell, i) => {
                 const state = SLOT_STATE[cell.status];
                 const Icon = state.icon;
@@ -75,45 +81,46 @@ export function BookingBoard({
                       type="button"
                       disabled={!isFree}
                       aria-disabled={!isFree}
+                      aria-label={`${court.name}, ${cell.time}, ${label}${
+                        isFree ? `, ${cell.priceRsd} dinara` : ""
+                      }`}
                       onClick={() => isFree && setSelection({ cell, courtName: court.name })}
                       className={cn(
-                        "animate-slot-in flex min-h-[60px] w-full touch-manipulation items-center gap-3 rounded-2xl border px-4 py-3 text-left transition-all duration-200",
+                        "animate-slot-in flex min-h-[60px] w-full touch-manipulation items-center gap-3 rounded-sm border px-4 py-3 text-left transition-all duration-200",
                         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
                         state.className,
                       )}
                       style={{ animationDelay: `${(courtIdx * 6 + i) * 25}ms` }}
                     >
-                      <Icon
-                        className={cn("size-5 shrink-0", state.iconClassName)}
-                        aria-hidden="true"
-                      />
                       <span className="min-w-0 flex-1">
-                        <span className="tabular block text-lg font-semibold leading-tight">
+                        <span className="tabular block text-[17px] font-semibold leading-tight">
                           {cell.time}
                           <span className="ml-1.5 text-sm font-normal text-muted-foreground">
                             – {endTime(cell)}
                           </span>
                         </span>
-                        <span className="block truncate text-xs">{label}</span>
+                        {state.showLabel && (
+                          <span className="mt-0.5 flex items-center gap-1.5 text-xs">
+                            <Icon
+                              className={cn("size-3.5 shrink-0", state.iconClassName)}
+                              aria-hidden="true"
+                            />
+                            <span className="truncate">{label}</span>
+                          </span>
+                        )}
                       </span>
-                      <span className="shrink-0 text-right">
-                        <span
-                          className={cn(
-                            "tabular block text-base font-semibold",
-                            isFree ? "text-primary" : "text-muted-foreground",
-                          )}
-                        >
-                          {cell.priceRsd.toLocaleString("sr-RS")}
-                        </span>
-                        <span className="block text-[10px] uppercase tracking-wide text-muted-foreground">
-                          RSD
-                        </span>
-                      </span>
+
                       {isFree && (
-                        <ChevronRight
-                          className="size-4 shrink-0 text-muted-foreground"
-                          aria-hidden="true"
-                        />
+                        <>
+                          <span className="tabular shrink-0 text-right text-[15px] font-semibold text-foreground">
+                            {cell.priceRsd.toLocaleString("sr-RS")}
+                            <span className="eyebrow ml-1.5 text-muted-foreground">rsd</span>
+                          </span>
+                          <ChevronRight
+                            className="size-4 shrink-0 text-clay-500"
+                            aria-hidden="true"
+                          />
+                        </>
                       )}
                     </button>
                   </li>
@@ -125,16 +132,18 @@ export function BookingBoard({
       </div>
 
       {/* ---------------- Desktop: courts × slots matrix ---------------- */}
-      <div className="mt-4 hidden md:block">
+      <div className="mt-8 hidden md:block">
         <div
           className="grid gap-2"
-          style={{ gridTemplateColumns: `88px repeat(${courts.length}, minmax(0, 1fr))` }}
+          style={{ gridTemplateColumns: `5.5rem repeat(${courts.length}, minmax(0, 1fr))` }}
         >
           <div />
           {courts.map((court) => (
+            // A ruled label, not a filled pill — green as a background block here
+            // was the single loudest thing on the page and it isn't a control.
             <div
               key={court.id}
-              className="rounded-xl bg-primary px-3 py-2 text-center text-base font-semibold text-on-primary"
+              className="eyebrow rule-t pb-3 pt-3 text-center text-muted-foreground"
             >
               {court.name}
             </div>
@@ -183,7 +192,7 @@ function Row({
 }) {
   return (
     <>
-      <div className="tabular flex items-center justify-end pr-1 text-sm font-semibold text-muted-foreground">
+      <div className="tabular flex items-center justify-end pr-2 text-sm text-muted-foreground">
         {time}
       </div>
       {courts.map((court) => {
@@ -203,19 +212,22 @@ function Row({
             aria-label={`${court.name}, ${time}, ${label}${isFree ? `, ${cell.priceRsd} dinara` : ""}`}
             onClick={() => isFree && onPick({ cell, courtName: court.name })}
             className={cn(
-              "animate-slot-in flex min-h-[64px] flex-col items-center justify-center gap-0.5 rounded-xl border px-2 py-2 transition-all duration-200",
+              "animate-slot-in flex min-h-[62px] flex-col items-center justify-center gap-0.5 rounded-sm border px-2 py-2 transition-all duration-200",
               "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
               state.className,
             )}
             style={{ animationDelay: `${rowIdx * 40}ms` }}
           >
-            <span className="flex items-center gap-1.5 text-xs font-medium">
-              <Icon className={cn("size-3.5", state.iconClassName)} aria-hidden="true" />
-              <span className="truncate">{label}</span>
-            </span>
+            {state.showLabel && (
+              <span className="flex items-center gap-1.5 text-xs">
+                <Icon className={cn("size-3.5", state.iconClassName)} aria-hidden="true" />
+                <span className="truncate">{label}</span>
+              </span>
+            )}
             {isFree && (
-              <span className="tabular text-sm font-semibold text-primary">
-                {cell.priceRsd.toLocaleString("sr-RS")} RSD
+              <span className="tabular text-[15px] font-semibold text-foreground">
+                {cell.priceRsd.toLocaleString("sr-RS")}
+                <span className="eyebrow ml-1.5 text-muted-foreground">rsd</span>
               </span>
             )}
           </button>
@@ -227,8 +239,9 @@ function Row({
 
 function Legend() {
   return (
-    <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 rounded-xl bg-muted/60 px-4 py-3 text-xs text-muted-foreground">
-      {(["free", "taken", "blocked"] as const).map((s) => {
+    <div className="rule-t mt-8 flex flex-wrap items-center gap-x-6 gap-y-2 pt-4 text-xs text-muted-foreground">
+      <span>Termini sa cenom su slobodni.</span>
+      {(["taken", "blocked"] as const).map((s) => {
         const Icon = SLOT_STATE[s].icon;
         return (
           <span key={s} className="inline-flex items-center gap-1.5">
@@ -237,84 +250,93 @@ function Legend() {
           </span>
         );
       })}
-      <span className="ml-auto">Termin traje 90 minuta</span>
+      <span className="ml-auto">Termin traje 90 minuta · plaćanje na licu mesta</span>
     </div>
   );
 }
 
 function SuccessScreen({ data, onReset }: { data: BookingSuccess; onReset: () => void }) {
   return (
-    <div className="animate-fade-in py-8">
-      <div className="mx-auto max-w-md rounded-3xl border border-primary/20 bg-card p-6 text-center shadow-lg sm:p-8">
-        <div className="mx-auto flex size-16 items-center justify-center rounded-full bg-accent">
-          <CalendarCheck className="size-8 text-on-accent" aria-hidden="true" />
-        </div>
-
-        <h2 className="mt-5 text-2xl font-bold">Termin je rezervisan</h2>
-        <p className="mt-1.5 text-sm text-muted-foreground">
-          Vidimo se na terenu, {data.customerName.split(" ")[0]}.
+    <div className="animate-fade-in rule-t mt-8 pt-12 pb-8">
+      {/* Left-aligned like every other block on the site — centring it here made
+          the confirmation read as a different page than the board it replaced. */}
+      <div className="max-w-xl">
+        <p className="eyebrow flex items-center gap-2 text-clay-500">
+          <Check className="size-4" aria-hidden="true" />
+          Potvrđeno
         </p>
-
-        <dl className="mt-6 divide-y divide-border rounded-2xl border border-border text-left">
-          <Row2 label="Teren" value={data.courtName} />
-          <Row2 label="Datum" value={data.dateLabel} capitalize />
-          <Row2 label="Vreme" value={data.timeRange} />
-          <Row2 label="Cena" value={data.priceLabel} strong />
-        </dl>
-
-        <p className="mt-5 rounded-xl bg-green-50 px-4 py-3 text-left text-xs leading-relaxed text-primary">
-          Klub je obavešten o vašoj rezervaciji. Ako nešto iskrsne, javite se na{" "}
-          <a href={CLUB.phoneHref} className="font-semibold underline underline-offset-2">
+        <h2 className="font-display mt-4 text-[2.1rem] text-foreground sm:text-[2.5rem]">
+          Vidimo se na terenu, {data.customerName.split(" ")[0]}.
+        </h2>
+        <p className="mt-4 text-[15px] leading-relaxed text-muted-foreground">
+          Klub je obavešten o rezervaciji. Ako nešto iskrsne, javi se na{" "}
+          <a
+            href={CLUB.phoneHref}
+            className="text-foreground underline decoration-rule underline-offset-4 transition-colors hover:decoration-foreground"
+          >
             {CLUB.phone}
           </a>
           .
         </p>
 
-        <div className="mt-6 flex flex-col gap-2">
-          <Button variant="outline" size="lg" onClick={onReset}>
+        <dl className="mt-10">
+          <DetailRow label="Teren" value={data.courtName} />
+          <DetailRow label="Datum" value={sentenceCase(data.dateLabel)} />
+          <DetailRow label="Vreme" value={data.timeRange} />
+          <DetailRow label="Cena" value={data.priceLabel} strong />
+        </dl>
+
+        <div className="mt-10 flex flex-wrap items-center gap-5">
+          <Button variant="accent" size="lg" onClick={onReset}>
             Rezerviši još jedan termin
           </Button>
-          <Link href="/" className="w-full">
-            <Button variant="ghost" size="md" className="w-full">
-              Nazad na početnu
-            </Button>
+          <Link
+            href="/"
+            className="text-sm text-muted-foreground underline decoration-rule underline-offset-[6px] transition-colors hover:text-foreground hover:decoration-foreground"
+          >
+            Nazad na početnu
           </Link>
         </div>
 
-        <div className="mt-5 flex items-center justify-center gap-4 border-t border-border pt-4 text-xs text-muted-foreground">
-          <a href={CLUB.phoneHref} className="inline-flex items-center gap-1.5 hover:text-primary">
+        <div className="rule-t mt-10 flex flex-wrap items-center gap-x-6 gap-y-2 pt-5 text-[13px] text-muted-foreground">
+          <a
+            href={CLUB.phoneHref}
+            className="inline-flex items-center gap-1.5 transition-colors hover:text-foreground"
+          >
             <Phone className="size-3.5" aria-hidden="true" />
             {CLUB.phone}
           </a>
-          <span className="inline-flex items-center gap-1.5">
-            <MapPin className="size-3.5" aria-hidden="true" />
-            {CLUB.city}
-          </span>
+          <a
+            href={CLUB.instagram}
+            target="_blank"
+            rel="noreferrer noopener"
+            className="inline-flex items-center gap-1.5 transition-colors hover:text-foreground"
+          >
+            {CLUB.instagramHandle}
+            <ArrowUpRight className="size-3.5" aria-hidden="true" />
+          </a>
         </div>
       </div>
     </div>
   );
 }
 
-function Row2({
+function DetailRow({
   label,
   value,
   strong,
-  capitalize,
 }: {
   label: string;
   value: string;
   strong?: boolean;
-  capitalize?: boolean;
 }) {
   return (
-    <div className="flex items-center justify-between gap-4 px-4 py-3">
-      <dt className="text-sm text-muted-foreground">{label}</dt>
+    <div className="rule-t grid grid-cols-[7rem_1fr] gap-4 py-4 first:border-t-0 first:pt-0">
+      <dt className="eyebrow pt-1.5 text-muted-foreground">{label}</dt>
       <dd
         className={cn(
-          "text-right text-sm font-medium",
-          strong && "tabular text-base font-bold text-primary",
-          capitalize && "capitalize",
+          "text-[15px] leading-relaxed text-foreground",
+          strong && "tabular font-display text-[1.35rem] text-clay-500",
         )}
       >
         {value}

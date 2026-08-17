@@ -39,3 +39,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# higgsfield skills (installed via `npx skills add higgsfield-ai/skills`)
+/.agents/
+/.claude/skills/higgsfield-*/
+/skills-lock.json

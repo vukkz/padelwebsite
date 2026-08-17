@@ -1,76 +1,105 @@
 @import "tailwindcss";
 
 /*
-  Padel House — design tokens.
+  Padel House — the club's own brand, executed.
 
-  Four colours, strict roles. Ink and bone carry the page; green is the brand
-  ground; volt is an accent used at most once per viewport — on the one thing
-  you want tapped. The moment volt becomes a background for several blocks at
-  once it stops signalling anything and the page reads like a template.
+  Taken from their actual material rather than invented: the emerald of their
+  logo badge, the cream their campaign type is set in, the terracotta of the
+  court, the warm wood of the pavilion slats. Their bio says "Premium Event
+  Prostor" and their campaigns set bold neo-grotesque caps in cream over
+  sunlit photography — so headlines are a heavy sans, and the serif is
+  reserved for the wordmark exactly as they use it.
+
+  What makes this premium is confidence, not quiet: photography at scale, type
+  at scale, and colour held back to one accent. The earlier cream build failed
+  by being timid — small serif headings, hairline everything, nothing louder
+  than anything else.
 */
 :root {
-  /* Brand */
-  --color-green-950: #06170f;
-  --color-green-900: #0a2618;
-  --color-green-800: #0e3623;
-  --color-green-700: #164a31;
-  --color-green-600: #216044;
-  --color-green-100: #d6e6dc;
-  --color-green-50: #eef5f0;
+  /* --- Brand ----------------------------------------------------------- */
+  /* Emerald, sampled from the logo badge. */
+  --green: #046a38;
+  --green-deep: #034a27;
+  --green-dark: #02301a;
+
+  /* Warm cream. Their campaign lettering colour, and the site's ground. */
+  --cream: #f5f1e8;
+  --cream-warm: #efe9dc;
+  --cream-deep: #e4dcca;
 
   /*
-    Clay, taken off the court itself. The original lime accent appeared nowhere
-    in the venue — the club reads deep green, terracotta and warm wood, so the
-    accent comes from the surface people actually play on.
+    Court terracotta. The one accent, used on what should be pressed.
+
+    Deepened from #c2593a. That value carried two jobs it could not do: as small
+    label type on cream it measured 3.89:1, and as a button plate under white
+    text 4.39:1 — both under AA. A few steps darker clears 4.5:1 in both
+    directions without reading as a different colour.
   */
-  --color-clay-600: #963d24;
-  --color-clay-500: #b0492d;
-  --color-clay-400: #c85c3c;
-  --color-clay-300: #dc9377;
-  --color-clay-100: #f2ded4;
+  --terracotta: #b04a2c;
+  --terracotta-deep: #8f3a20;
 
-  /* Warm neutrals — bone, not grey. Keeps the club feeling like a room. */
-  --color-bone-50: #faf8f3;
-  --color-bone-100: #f2efe6;
-  --color-bone-200: #e6e1d4;
-  --color-bone-300: #d5cebc;
+  /* Pavilion wood, for warmth on dark panels. */
+  --wood: #b08356;
 
-  /* Wood slats on the pavilion — used sparingly, for warmth on dark panels. */
-  --color-wood-400: #c89257;
-  --color-wood-200: #e4c9a3;
+  /*
+    Scrim colour for type over photography.
 
-  /* Semantic */
-  --background: var(--color-bone-50);
-  --foreground: #131a15;
+    Deliberately NOT the brand green. Layering a cold #02301a over golden-hour
+    photography turned the terracotta court brown-grey and the warm wood olive
+    — it drained the exact warmth that makes this brand read as expensive. A
+    warm near-black darkens for contrast while the sunlight survives.
+  */
+  --shade: #17120b;
 
-  --card: #ffffff;
-  --card-foreground: #131a15;
+  /* Warm near-black. Never a neutral grey. */
+  --ink: #1a1815;
+  /*
+    Body copy on cream. #6d6559 measured 3.89:1 against #f5f1e8 — under AA for
+    the paragraph text it carries across every cream section, not just the hero.
+  */
+  --ink-soft: #5a5349;
+  /* Faint is for labels and metadata only, never for reading copy. */
+  --ink-faint: #8a7f6f;
 
-  --primary: var(--color-green-800);
-  --primary-hover: var(--color-green-700);
-  --on-primary: #ffffff;
-
-  --accent: var(--color-clay-500);
-  --accent-hover: var(--color-clay-400);
+  /* --- Semantic (also consumed by the out-of-scope /admin panel) -------- */
+  --background: var(--cream);
+  --foreground: var(--ink);
+  --card: #fbf9f4;
+  --card-foreground: var(--ink);
+  --primary: var(--green);
+  --primary-hover: var(--green-deep);
+  --on-primary: var(--cream);
+  --accent: var(--terracotta);
+  --accent-hover: var(--terracotta-deep);
   --on-accent: #ffffff;
-
-  --muted: var(--color-bone-100);
-  --muted-foreground: #6b7168;
-
-  --border: var(--color-bone-200);
-  --rule: #ded8ca;
-  --ring: var(--color-green-700);
-
+  --muted: var(--cream-warm);
+  --muted-foreground: var(--ink-soft);
+  --border: var(--cream-deep);
+  --rule: #ddd4c0;
+  --ring: var(--terracotta);
   --destructive: #a92e26;
   --on-destructive: #ffffff;
-  --destructive-soft: #fbf1ef;
-
-  --success: #2c6a45;
+  --destructive-soft: #f7ece8;
+  --success: var(--green);
   --warning: #8a6420;
-  --warning-soft: #faf4e6;
+  --warning-soft: #f7efdc;
 }
 
 @theme inline {
+  --color-green: var(--green);
+  --color-green-deep: var(--green-deep);
+  --color-green-dark: var(--green-dark);
+  --color-cream: var(--cream);
+  --color-cream-warm: var(--cream-warm);
+  --color-cream-deep: var(--cream-deep);
+  --color-terracotta: var(--terracotta);
+  --color-terracotta-deep: var(--terracotta-deep);
+  --color-wood: var(--wood);
+  --color-shade: var(--shade);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-ink-faint: var(--ink-faint);
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -93,27 +122,28 @@
   --color-warning: var(--warning);
   --color-warning-soft: var(--warning-soft);
 
-  --color-green-950: #06170f;
-  --color-green-900: #0a2618;
-  --color-green-800: #0e3623;
-  --color-green-700: #164a31;
-  --color-green-600: #216044;
-  --color-green-100: #d6e6dc;
-  --color-green-50: #eef5f0;
-  --color-clay-600: #963d24;
-  --color-clay-500: #b0492d;
-  --color-clay-400: #c85c3c;
-  --color-clay-300: #dc9377;
-  --color-clay-100: #f2ded4;
-  --color-bone-50: #faf8f3;
-  --color-bone-100: #f2efe6;
-  --color-bone-200: #e6e1d4;
-  --color-bone-300: #d5cebc;
-  --color-wood-400: #c89257;
-  --color-wood-200: #e4c9a3;
+  /* Retired scales, aliased so the booking components and /admin keep working. */
+  --color-clay-100: #f5e2da;
+  --color-clay-300: #e0937c;
+  --color-clay-400: #d06c4c;
+  --color-clay-500: var(--terracotta);
+  --color-clay-600: var(--terracotta-deep);
+  --color-green-50: #e7efe8;
+  --color-green-100: #d3e2d7;
+  --color-green-600: #057a41;
+  --color-green-700: var(--green);
+  --color-green-800: var(--green);
+  --color-green-900: var(--green-deep);
+  --color-green-950: var(--green-dark);
+  --color-bone-50: var(--cream);
+  --color-bone-100: var(--cream-warm);
+  --color-bone-200: var(--cream-deep);
+  --color-bone-300: #cfc4ab;
+  --color-wood-200: #ddc09b;
+  --color-wood-400: var(--wood);
 
-  --font-sans: var(--font-barlow);
-  --font-serif: var(--font-display);
+  --font-sans: var(--font-inter);
+  --font-serif: var(--font-wordmark);
 }
 
 html {
@@ -121,62 +151,132 @@ html {
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-barlow), system-ui, sans-serif;
+  background: var(--cream);
+  color: var(--ink);
+  font-family: var(--font-inter), system-ui, sans-serif;
   -webkit-tap-highlight-color: transparent;
 }
 
-/*
-  body is a flex column, so its children default to min-width:auto and refuse to
-  shrink below their content. Without this, the admin grid's min-w-[720px] pushes
-  the entire page sideways on a phone instead of scrolling inside its own
-  overflow-x-auto container.
-*/
+::selection {
+  background: var(--green);
+  color: var(--cream);
+}
+
+:root {
+  accent-color: var(--terracotta);
+  caret-color: var(--terracotta);
+  scrollbar-color: var(--ink-faint) var(--cream-warm);
+}
+
 body > * {
   min-width: 0;
 }
 
 /*
-  Editorial display face. Set at normal weight with tight tracking and short
-  leading — a serif at 300–400 reads as considered, the same serif at 700 reads
-  as a poster. SOFT/WONK soften the terminals so it feels like a room rather
-  than a law firm.
+  Layered in `components`. Unlayered CSS beats every layered rule regardless of
+  specificity, and Tailwind v4 ships utilities inside `@layer utilities` — the
+  original build had `.font-display` silently killing every `leading-*` on the
+  same element. Anything declaring a property a utility also sets goes here.
 */
-.font-display {
-  font-family: var(--font-display), Georgia, serif;
-  font-variation-settings: "SOFT" 30, "WONK" 1;
-  font-weight: 400;
-  letter-spacing: -0.02em;
-  line-height: 1.02;
-}
+@layer components {
+  /*
+    Campaign lettering. Their posts set this as heavy neo-grotesque caps, very
+    tight, in cream over photography. Optical sizing and negative tracking do
+    the premium work; at default tracking a bold sans reads as a UI label
+    rather than as a brand statement.
+  */
+  .display {
+    font-family: var(--font-inter), system-ui, sans-serif;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: -0.035em;
+    /*
+      1.0, not the 0.9 a Latin-only headline would take.
 
-/* Small all-caps labels that give the page its editorial scaffolding. */
-.eyebrow {
-  font-family: var(--font-barlow), system-ui, sans-serif;
-  font-size: 0.6875rem;
-  font-weight: 600;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-}
+      Serbian caps carry carons — Č Ć Š Ž — that sit well above cap height. At
+      0.9 they collided outright with the line above ("CEO TEREN, NE PO IGRAČU")
+      and at 0.96 they still crowded it ("ŠTA JE UKLJUČENO"). Uppercase has no
+      descenders, so 1.0 still reads tight; it just gives the diacritics the
+      room a latin-ext display setting actually needs.
+    */
+    line-height: 1;
+    font-variation-settings: "opsz" 32;
+  }
 
-/* Prices and times sit in columns — keep the digits from jittering. */
-.tabular {
-  font-variant-numeric: tabular-nums;
-}
+  /* The wordmark, and only the wordmark. Matches their logo badge. */
+  .wordmark {
+    font-family: var(--font-wordmark), Georgia, serif;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+  }
 
-/* Hairline rules do a lot of the editorial work; keep them one weight. */
-.rule-t {
-  border-top: 1px solid var(--rule);
-}
+  /*
+    Small letterspaced caps. The quiet counterweight that makes the heavy
+    display type read as deliberate rather than merely large.
+  */
+  .label {
+    font-family: var(--font-inter), system-ui, sans-serif;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    font-variant-numeric: tabular-nums;
+  }
 
-/* Horizontal day strip: snap each chip, hide the scrollbar chrome. */
-.no-scrollbar {
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Hairline, warm. One weight everywhere. */
+  .rule-t {
+    border-top: 1px solid var(--rule);
+  }
+
+  .no-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* --- Aliases for the retired worlds, so /admin keeps its styling ------ */
+  .font-display {
+    font-family: var(--font-inter), system-ui, sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    line-height: 1.05;
+  }
+
+  .eyebrow {
+    font-family: var(--font-inter), system-ui, sans-serif;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+
+  .panel-type {
+    font-family: var(--font-inter), system-ui, sans-serif;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: -0.035em;
+    line-height: 1;
+  }
+
+  .spec {
+    font-family: var(--font-inter), system-ui, sans-serif;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .cell {
+    border: 1px solid currentColor;
+    padding: 0.35rem 0.7rem;
+  }
 }
 
 @keyframes slot-in {
@@ -191,15 +291,15 @@ body > * {
 }
 
 /*
-  Editorial reveal: a short rise out of a slight blur. Cheap (opacity/transform/
-  filter only), and subtle enough that it reads as the page settling rather than
-  as an animation demanding attention.
+  One authored entrance: a slow rise out of a hair of blur, exponential ease.
+  Applied to the opening statement only — not once per section, which is what
+  made the original build's reveal read as a template tic.
 */
-@keyframes reveal {
+@keyframes rise {
   from {
     opacity: 0;
-    transform: translateY(14px);
-    filter: blur(6px);
+    transform: translateY(18px);
+    filter: blur(8px);
   }
   to {
     opacity: 1;
@@ -208,22 +308,23 @@ body > * {
   }
 }
 
-.reveal {
-  animation: reveal 700ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
+.rise {
+  animation: rise 900ms cubic-bezier(0.16, 1, 0.3, 1) backwards;
 }
 
-/* Slow drift on the hero photograph — the only thing moving above the fold. */
-@keyframes kenburns {
+/* Slow drift on the opening photograph. Scale only — vertical travel moves the
+   tonal region behind fixed type and invalidates any contrast measurement. */
+@keyframes drift {
   from {
-    transform: scale(1.06) translate3d(0, 0, 0);
+    transform: scale(1.04);
   }
   to {
-    transform: scale(1.14) translate3d(0, -1.5%, 0);
+    transform: scale(1.1);
   }
 }
 
-.animate-kenburns {
-  animation: kenburns 24s ease-out forwards;
+.drift {
+  animation: drift 20s ease-out forwards;
 }
 
 @keyframes sheet-up {
@@ -245,10 +346,10 @@ body > * {
 }
 
 .animate-slot-in {
-  animation: slot-in 320ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  animation: slot-in 320ms cubic-bezier(0.16, 1, 0.3, 1) backwards;
 }
 .animate-sheet-up {
-  animation: sheet-up 260ms cubic-bezier(0.22, 1, 0.36, 1);
+  animation: sheet-up 260ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 .animate-fade-in {
   animation: fade-in 200ms ease-out;
@@ -261,8 +362,8 @@ body > * {
   .animate-slot-in,
   .animate-sheet-up,
   .animate-fade-in,
-  .animate-kenburns,
-  .reveal {
+  .drift,
+  .rise {
     animation: none;
   }
   *,

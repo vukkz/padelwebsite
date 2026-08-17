@@ -12,6 +12,7 @@ import {
   formatRsd,
   longDateLabel,
   parseDateStr,
+  sentenceCase,
   slotRangeLabel,
 } from "@/lib/time";
 import { addDays } from "date-fns";
@@ -120,8 +121,8 @@ export default async function AdminDayPage({ searchParams }: PageProps<"/admin">
         </div>
 
         <div className="min-w-0">
-          <h1 className="truncate text-xl font-bold capitalize sm:text-2xl">
-            {longDateLabel(dateStr)}
+          <h1 className="font-display truncate text-xl sm:text-2xl">
+            {sentenceCase(longDateLabel(dateStr))}
           </h1>
           {dateStr !== today && (
             <Link href="/admin" className="text-xs font-medium text-primary hover:underline">

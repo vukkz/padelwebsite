@@ -53,6 +53,11 @@ export const GOOD_TO_KNOW = [
  * translated testimonial stops being a testimonial. Note that every one of
  * these is about the coffee and the setting, not the padel.
  *
+ * `lang` is not decoration: the document is sr-Latn-RS, so without a per-quote
+ * override a screen reader speaks these English sentences with Serbian
+ * phonemes and they come out as noise (WCAG 3.1.2, Language of Parts). Set it
+ * on every entry, and change it if a Serbian review is ever added.
+ *
  * TODO(pitch): refresh from the Google profile before the demo.
  */
 export const REVIEWS = [
@@ -61,49 +66,85 @@ export const REVIEWS = [
       "Best place at the very unique location. Spotless clean, cozy atmosphere and top coffee! Very helpful team and welcoming for kids and dogs!",
     author: "Valeriya Yunnikova",
     meta: "Local Guide · 27 recenzija",
+    lang: "en",
   },
   {
     quote:
       "Nice coffee spot in a beautiful historic setting near Kalemegdan. Chill vibe, good service, and a great place to take a break in the city.",
     author: "Damjana Kisic",
     meta: "Local Guide · 20 recenzija",
+    lang: "en",
   },
   {
     quote:
       "Very pleasant and peaceful place, beautiful interior as well as exterior, staff always polite, professional and in a good mood. I have nothing to say about the coffee except that it is perfect.",
     author: "Nemanja Pavlović",
     meta: "Local Guide · 43 recenzije",
+    lang: "en",
   },
   {
     quote: "Absolutely hidden gem. Quiet, clean, wide choice of coffee.",
     author: "Dávid Vaskor-Dely",
     meta: "8 recenzija",
+    lang: "en",
   },
   {
     quote:
       "Wonderful place, heartwarming atmosphere with a great coffee and croissants! Barista talkative and friendly.",
     author: "Alberto Balsalm",
     meta: "3 recenzije",
+    lang: "en",
   },
   {
     quote: "My favourite place in the city so far! Great coffee and atmosphere.",
     author: "Polina Kabakova",
     meta: "3 recenzije",
+    lang: "en",
   },
 ] as const;
 
 /**
- * The venue does three things, and the site should say so. Padel booking is
- * only the part we automate — the café and the events are what fills the
- * fortress moat on a Saturday.
+ * Events the club has actually run, not event categories.
+ *
+ * The earlier list was "Venčanja · Firmske proslave · Rođendani · Turniri" —
+ * true of every venue in Belgrade, and it read as keyword filler. These are
+ * named, dated things this venue put on, which prove the capability instead of
+ * asserting it. Sourced from the club's own Instagram (@padelhouse.beograd).
+ *
+ * TODO(pitch): confirm names, partners and rough dates with the club before
+ * the demo. These are read off their public posts, not given to us.
  */
-export const EVENT_TYPES = [
-  "Venčanja",
-  "Firmske proslave",
-  "Rođendani",
-  "Turniri",
-  "Projekcije utakmica",
-  "Privatna okupljanja",
+export const EVENTS = [
+  {
+    name: "Oaza",
+    meta: "vol. 1",
+    note: "Bašta i lounge na travnjaku ispod bedema.",
+  },
+  {
+    name: "Padel & Pour",
+    meta: "Bottone × Grace Cocktail",
+    note: "Koktel večer na terenu, u saradnji sa barovima iz grada.",
+  },
+  {
+    name: "Rođendan pod zvezdama",
+    meta: "Bioskop na otvorenom",
+    note: "Projekcija i večera ispod osvetljenog bedema.",
+  },
+  {
+    name: "Žurka bez telefona",
+    meta: "Digital detox",
+    note: "Prva phone-free žurka u Beogradu.",
+  },
+  {
+    name: "Venčanja",
+    meta: "Travnjak i terasa",
+    note: "Ceremonija i večera u šancu tvrđave.",
+  },
+  {
+    name: "Dečji rođendani",
+    meta: "Terasa",
+    note: "Deca i psi su dobrodošli, i to gosti pominju sami.",
+  },
 ] as const;
 
 export const TIMEZONE = "Europe/Belgrade";

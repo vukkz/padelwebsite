@@ -46,7 +46,7 @@ export function Field({ label, htmlFor, hint, error, required, children }: Field
 
 export const inputClass = cn(
   // 48px tall: iOS won't zoom on focus at 16px, and it clears the touch minimum.
-  "w-full h-12 rounded-xl border border-border bg-card px-3.5 text-base text-foreground",
+  "w-full h-12 rounded-sm border border-rule bg-card px-3.5 text-base text-foreground",
   "placeholder:text-muted-foreground/60",
   "transition-colors duration-200",
   "focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent",
