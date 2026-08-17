@@ -95,10 +95,20 @@ export function SiteHeader({
             {CLUB.phone}
           </a>
 
+          {/*
+            Visible at every width, including below 640px.
+
+            It was `hidden sm:inline-flex`, which on a phone left the frame
+            carrying a wordmark and three nav links and no booking action at
+            all — while the hero CTA measured 29px below an 844px fold. So the
+            dominant context had no way to book without scrolling, against the
+            one hard requirement this project states. Narrower padding at the
+            smallest size keeps it off the nav rather than hiding it.
+          */}
           <Link
             href="/rezervacija"
             className={[
-              "hidden h-11 shrink-0 items-center px-6 text-[13px] font-semibold tracking-[0.06em] uppercase transition-colors sm:inline-flex",
+              "inline-flex h-11 shrink-0 items-center px-4 text-[13px] font-semibold tracking-[0.06em] uppercase transition-colors sm:px-6",
               "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-terracotta",
               // Over photography the cream plate flips to terracotta on hover,
               // matching the hero's primary action so both white buttons on

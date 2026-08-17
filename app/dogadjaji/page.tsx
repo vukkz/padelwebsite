@@ -46,7 +46,7 @@ export default function DogadjajiPage() {
 
   return (
     <>
-      <SiteHeader active="/dogadjaji" />
+      <SiteHeader active="/dogadjaji" overlay />
       <main className="flex-1">
         <PageHero
           label="Premium event prostor"
@@ -54,7 +54,7 @@ export default function DogadjajiPage() {
           lead="Zatvaramo ceo prostor za vas: travnjak ispod bedema, terasu i teren. Od večere za trideset ljudi do firmskog turnira sa projekcijom — organizaciju radimo od početka do kraja."
           image="/photos/wedding.jpg"
           alt="Svadbena večera na travnjaku ispod bedema tvrđave"
-          objectPosition="50% 38%"
+          crop="object-[50%_44%] lg:object-[50%_34%]"
         >
           {/* Two affordances. tel: opens an OS prompt or nothing on desktop. */}
           <div
@@ -63,14 +63,14 @@ export default function DogadjajiPage() {
           >
             <a
               href={CLUB.phoneHref}
-              className="inline-flex min-h-14 items-center gap-3 bg-terracotta px-8 text-[13px] font-semibold uppercase tracking-[0.08em] text-white transition-colors hover:bg-terracotta-deep focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-terracotta focus-visible:ring-offset-4 focus-visible:ring-offset-cream"
+              className="inline-flex min-h-14 items-center gap-3 bg-terracotta px-8 text-[13px] font-semibold uppercase tracking-[0.08em] text-white transition-colors hover:bg-terracotta-deep focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cream focus-visible:ring-offset-4 focus-visible:ring-offset-shade"
             >
               <Phone className="size-4" aria-hidden="true" />
               {CLUB.phone}
             </a>
             <a
               href={`mailto:${CLUB.email}`}
-              className="label inline-flex min-h-11 items-center gap-2 text-ink-soft underline decoration-rule underline-offset-[8px] transition-colors hover:text-ink hover:decoration-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-terracotta focus-visible:ring-offset-2"
+              className="label inline-flex min-h-11 items-center gap-2 text-cream/85 underline decoration-cream/40 underline-offset-[8px] transition-colors hover:text-cream hover:decoration-cream focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cream focus-visible:ring-offset-2 focus-visible:ring-offset-shade"
             >
               <Mail className="size-4" aria-hidden="true" />
               Pošalji upit

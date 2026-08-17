@@ -25,7 +25,7 @@ const MAPS_LINK = `https://www.google.com/maps/search/?api=1&query=${encodeURICo
 export default function KafaPage() {
   return (
     <>
-      <SiteHeader active="/kafa" />
+      <SiteHeader active="/kafa" overlay />
       <main className="flex-1">
         {/*
           The pavilion frame, not the terrace one. `terrace.jpg` is a 1080px
@@ -40,7 +40,7 @@ export default function KafaPage() {
           lead="Specialty kafa i kroasani na terasi između terena i bedema. Mirno, čisto, sa decom i psima. Teren je tu, ali niko ne mora da igra da bi seo na terasu."
           image="/photos/hero-cafe.jpg"
           alt="Paviljon kafea, terasa i ležaljke na travnjaku ispod bedema"
-          objectPosition="46% 62%"
+          crop="object-[46%_56%] lg:object-[46%_64%]"
         >
           {/*
             These facts come from real reviews and are worth stating, but as a
@@ -48,7 +48,7 @@ export default function KafaPage() {
             sentence they read as the place describing itself.
           */}
           <p
-            className="rise mt-6 max-w-[44ch] text-[16px] leading-relaxed text-ink-soft"
+            className="rise mt-6 max-w-[44ch] text-[16px] leading-relaxed text-cream/85"
             style={{ animationDelay: "300ms" }}
           >
             Parking je u blizini, deca i psi su dobrodošli, kroasani stižu od jutra.

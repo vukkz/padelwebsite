@@ -2,22 +2,23 @@ import Link from "next/link";
 import Image from "next/image";
 import { CLUB, EVENTS, REVIEWS, SLOT_MINUTES } from "@/lib/config";
 import { SiteFooter, SiteHeader } from "@/components/site-frame";
+import { PageHero } from "@/components/page-hero";
 import { ActionLink } from "@/components/stamp-cta";
 
 /**
  * Home.
  *
- * The club's own campaign, executed as a page: a sunlit photograph of the court
- * in the fortress moat, their line set large in cream caps over it, and one
- * terracotta action. Everything after it alternates cream and emerald so the
- * scroll has three volumes rather than seven equal announcements.
+ * The club's own campaign, executed as a page: a golden-hour photograph of the
+ * court in the fortress moat, their line set large in cream caps over it, and
+ * one terracotta action. Everything after it alternates cream and emerald so
+ * the scroll has three volumes rather than seven equal announcements.
  */
 export default function HomePage() {
 	return (
 		<>
-			{/* Solid, not overlaid: the hero's left panel is cream now, and cream
-			    chrome on a cream plate is invisible. */}
-			<SiteHeader />
+			{/* Overlaid, not solid: the hero is a full-bleed photograph again, and
+			    a cream bar sitting on top of it would read as a separate strip. */}
+			<SiteHeader overlay />
 			<main className="flex-1">
 				<Hero />
 				<Trio />
@@ -32,125 +33,64 @@ export default function HomePage() {
 
 /* ----------------------------------------------------------------- hero -- */
 
+/*
+	The club's own line, set over the one photograph that shows what is actually
+	being sold: three people on the terracotta court in golden light, the wood
+	pavilion and the fortress wall behind them.
+
+	This frame was tried and rejected in an earlier pass on two grounds, both of
+	which the current composition answers. "Faces in front of the headline" was
+	true of a centred crop; the crop is biased high here so the three faces sit
+	in the upper band and the type occupies the scrimmed floor, which is empty
+	court. "Only a 1440px Instagram export" is the real cost and it stands — but
+	it is a square 1440, and every alternative in the library is a phone frame of
+	an empty court. A slightly softer photograph of people beats a sharp one of
+	nobody on a page whose entire argument is that the venue is the product.
+*/
 function Hero() {
 	return (
-		<section className="relative isolate grid min-h-[92svh] grid-cols-1 bg-cream lg:grid-cols-12">
-			{/*
-        The venue itself, from the sharpest original in the set (4284×5712).
-
-        Two frames were tried and rejected here. The posed three-player shot put
-        faces in front of the headline and only exists as a 1440px Instagram
-        export. The drinks tray was sharp but framed so close that the rackets
-        and balls stopped reading — it does its job at card scale on /kafa,
-        where the detail is the point.
-
-        This one shows the thing being sold: the court, the glass, the branded
-        posts and the fortress wall behind them, with no one in it to compete
-        with the type. Graded down — the raw frame is hard midday sun, and
-        pulling brightness while lifting contrast turns that into depth rather
-        than glare.
-      */}
-			<div className="relative order-1 min-h-[46svh] overflow-hidden bg-shade lg:order-2 lg:col-span-6 lg:min-h-0 xl:col-span-7">
-				{/*
-          Graded, not just placed.
-
-          The source is the sharpest frame in the set, but resolution and
-          quality are different things: shot in hard midday sun it arrives flat,
-          with a cold blue sky, cool shadows and a multicolour painted plaza
-          that all fight the cream-and-terracotta palette. Ungraded it reads as
-          a snapshot at any pixel count.
-
-          Three layers do the work. The filter pulls saturation down so the
-          plaza's blues and teals stop competing, warms the whole frame toward
-          the brand's range, and lifts contrast for depth. The multiply wash
-          unifies the remaining hues into one warm family. The vignette settles
-          the edges so the eye lands on the court rather than the fence.
-
-          Crop moved left to 38% as well: at 55% the mesh fence and the vertical
-          banner owned the right third of the frame, spending the hero on the
-          barrier rather than the venue.
-        */}
-				<Image
-					src="/photos/hero-court.jpg"
-					alt="Teren, staklena ograda i bedem tvrđave u šancu Kalemegdana"
-					fill
-					priority
-					sizes="(max-width: 1024px) 100vw, 55vw"
-					className="drift object-cover object-[38%_55%] brightness-[0.92] contrast-[1.14] saturate-[0.75] sepia-[0.3]"
-				/>
-				{/* Warm wash: one hue family instead of five competing ones. */}
-				<div
-					aria-hidden="true"
-					className="absolute inset-0 bg-[#5c3a1c] opacity-25 mix-blend-multiply"
-				/>
-				{/* Vignette, so the frame has a centre and the edges recede. */}
-				<div
-					aria-hidden="true"
-					className="absolute inset-0 bg-[radial-gradient(ellipse_at_48%_46%,transparent_28%,rgba(23,18,11,0.62)_100%)]"
-				/>
-				{/* No navigation scrim here any more — the header is solid and sits
-				    above the grid rather than over the photograph. */}
+		<PageHero
+			tall
+			label="Kalemegdan · Beograd"
+			title="Nije samo padel"
+			lead="Teren u šancu Beogradske tvrđave, specialty kafa na terasi i prostor za sve što dolazi posle meča. Rezervacija online — bez poziva i bez čekanja."
+			image="/photos/players-three.jpg"
+			alt="Tri igračice sa reketima na terakota terenu ispred paviljona i bedema tvrđave"
+			/*
+				One value would not serve both. The source is square, so a wide
+				desktop hero fills width and reads only the Y — 26% keeps all three
+				faces above the type. A phone hero fills height and reads only the X,
+				where centring holds the standing figure and both kneeling ones.
+			*/
+			crop="object-[50%_22%]"
+		>
+			<div className="rise mt-10" style={{ animationDelay: "300ms" }}>
+				<ActionLink href="/rezervacija" id="hero-cta">
+					Rezerviši termin
+				</ActionLink>
 			</div>
 
-			{/*
-				Cream panel, not near-black.
-
-				As a dark plate this opened onto a page that is cream, emerald and
-				bright — two different sites bolted together at the fold. The rest of
-				the site is the brand; the hero was the outlier, so the hero moved.
-				The graded photograph now supplies all the darkness the screen needs,
-				and it reads richer against cream than it did against black.
-			*/}
-			<div className="order-2 flex flex-col justify-end px-5 pb-14 pt-14 sm:px-8 sm:pb-20 lg:order-1 lg:col-span-6 lg:pb-24 lg:pl-[max(2rem,calc((100vw-88rem)/2+2rem))] lg:pt-24 xl:col-span-5">
-				<p
-					className="label rise text-terracotta"
-					style={{ animationDelay: "60ms" }}
-				>
-					Kalemegdan · Beograd
-				</p>
-
-				<h1
-					className="display rise mt-7 max-w-[11ch] text-ink text-[3.4rem] sm:text-[5rem] lg:text-[5.5rem] xl:text-[6.5rem]"
-					style={{ animationDelay: "140ms" }}
-				>
-					Nije samo padel
-				</h1>
-
-				<p
-					className="rise mt-8 max-w-[42ch] text-[16px] leading-relaxed text-ink-soft"
-					style={{ animationDelay: "220ms" }}
-				>
-					Teren u šancu Beogradske tvrđave, specialty kafa na terasi i prostor
-					za sve što dolazi posle meča. Rezervacija online — bez poziva i bez
-					čekanja.
-				</p>
-
-				<div className="rise mt-10" style={{ animationDelay: "300ms" }}>
-					<ActionLink href="/rezervacija" id="hero-cta">
-						Rezerviši termin
-					</ActionLink>
-				</div>
-
-				<dl
-					className="rise mt-12 flex gap-x-10 border-t border-rule pt-8"
-					style={{ animationDelay: "360ms" }}
-				>
-					<Stat k="3" v="terena" />
-					<Stat k={`${SLOT_MINUTES}′`} v="po terminu" />
-					<Stat k="08–18" v="svakog dana" />
-				</dl>
-			</div>
-		</section>
+			<dl
+				className="rise mt-12 flex gap-x-10 border-t border-cream/20 pt-8"
+				style={{ animationDelay: "360ms" }}
+			>
+				<Stat k="3" v="terena" />
+				<Stat k={`${SLOT_MINUTES}′`} v="po terminu" />
+				<Stat k="08–18" v="svakog dana" />
+			</dl>
+		</PageHero>
 	);
 }
 
 function Stat({ k, v }: { k: string; v: string }) {
 	return (
 		<div>
-			<dt className="tabular text-[1.6rem] font-semibold leading-none text-ink">
+			<dt className="tabular text-[1.6rem] font-semibold leading-none text-cream">
 				{k}
 			</dt>
-			<dd className="label mt-2 text-ink-faint">{v}</dd>
+			{/* cream/75 over the scrimmed photograph, not ink-faint: the old value
+			    measured 3.48:1 even on cream and would be unreadable here. */}
+			<dd className="label mt-2 text-cream/75">{v}</dd>
 		</div>
 	);
 }

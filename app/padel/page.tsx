@@ -21,7 +21,7 @@ export const metadata: Metadata = {
 export default function PadelPage() {
   return (
     <>
-      <SiteHeader active="/padel" />
+      <SiteHeader active="/padel" overlay />
       <main className="flex-1">
         <Hero />
         <Schedule />
@@ -43,14 +43,14 @@ function Hero() {
       lead={`Tri terena sa reflektorima, u šancu ispod bedema. Jedan termin traje ${SLOT_MINUTES} minuta i pokriva ceo teren — do četiri igrača, cena je za teren a ne po osobi.`}
       image="/photos/player-serve.jpg"
       alt="Igračica servira na terakota terenu ispred paviljona"
-      objectPosition="50% 28%"
+      crop="object-[50%_34%] lg:object-[50%_24%]"
     >
       <div className="rise mt-10" style={{ animationDelay: "300ms" }}>
         <ActionLink href="/rezervacija">Vidi slobodne termine</ActionLink>
       </div>
 
       <dl
-        className="rise mt-12 flex gap-x-10 border-t border-rule pt-8"
+        className="rise mt-12 flex gap-x-10 border-t border-cream/20 pt-8"
         style={{ animationDelay: "360ms" }}
       >
         <Stat k="3" v="terena" />
@@ -64,8 +64,11 @@ function Hero() {
 function Stat({ k, v }: { k: string; v: string }) {
   return (
     <div>
-      <dt className="tabular text-[1.6rem] font-semibold leading-none text-ink">{k}</dt>
-      <dd className="label mt-2 text-ink-faint">{v}</dd>
+      {/* On-dark: this strip lives inside the hero photograph, not on cream. */}
+      <dt className="tabular text-[1.6rem] font-semibold leading-none text-cream">
+        {k}
+      </dt>
+      <dd className="label mt-2 text-cream/75">{v}</dd>
     </div>
   );
 }
