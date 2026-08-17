@@ -63,14 +63,14 @@ export default function DogadjajiPage() {
           >
             <a
               href={CLUB.phoneHref}
-              className="inline-flex min-h-14 items-center gap-3 bg-terracotta px-8 text-[13px] font-semibold uppercase tracking-[0.08em] text-white transition-colors hover:bg-terracotta-deep focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cream focus-visible:ring-offset-4 focus-visible:ring-offset-green-dark"
+              className="inline-flex min-h-14 items-center gap-3 bg-terracotta px-8 text-[13px] font-semibold uppercase tracking-[0.08em] text-white transition-colors hover:bg-terracotta-deep focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cream focus-visible:ring-offset-4 focus-visible:ring-offset-shade"
             >
               <Phone className="size-4" aria-hidden="true" />
               {CLUB.phone}
             </a>
             <a
               href={`mailto:${CLUB.email}`}
-              className="label inline-flex min-h-11 items-center gap-2 text-cream/85 underline decoration-cream/40 underline-offset-[8px] transition-colors hover:text-cream hover:decoration-cream focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cream focus-visible:ring-offset-2 focus-visible:ring-offset-green-dark"
+              className="label inline-flex min-h-11 items-center gap-2 text-cream/85 underline decoration-cream/40 underline-offset-[8px] transition-colors hover:text-cream hover:decoration-cream focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cream focus-visible:ring-offset-2 focus-visible:ring-offset-shade"
             >
               <Mail className="size-4" aria-hidden="true" />
               Pošalji upit
@@ -134,14 +134,14 @@ export default function DogadjajiPage() {
                 <span className="text-[15px] leading-relaxed text-cream/85 sm:col-span-5">
                   {e.note}
                 </span>
-                <span className="label text-cream/60 sm:col-span-3 sm:text-right">
+                <span className="label text-cream/90 sm:col-span-3 sm:text-right">
                   {e.meta}
                 </span>
               </li>
             ))}
           </ul>
 
-          <p className="label mt-8 text-cream/55">
+          <p className="label mt-8 text-cream/90">
             Program se menja — najnovije uvek na {CLUB.instagramHandle}
           </p>
         </div>

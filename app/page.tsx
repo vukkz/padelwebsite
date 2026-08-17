@@ -202,7 +202,7 @@ function Proof() {
 					</div>
 
 					<div className="flex flex-col lg:col-span-7">
-						<p className="label text-cream/75">Recenzije</p>
+						<p className="label text-cream/90">Recenzije</p>
 						<h2 className="display mt-6 max-w-[13ch] text-[2.8rem] sm:text-[4.5rem]">
 							Ostaju zbog kafe
 						</h2>
@@ -222,7 +222,7 @@ function Proof() {
 						>
 							“{lead.quote}”
 						</blockquote>
-						<p className="label mt-5 text-cream/75">{lead.author}</p>
+						<p className="label mt-5 text-cream/90">{lead.author}</p>
 
 						<ul className="mt-12 grid gap-8 border-t border-cream/25 pt-10 sm:grid-cols-2">
 							{rest.map((r) => (
@@ -233,13 +233,13 @@ function Proof() {
 									>
 										“{r.quote}”
 									</blockquote>
-									<p className="label mt-auto pt-5 text-cream/75">{r.author}</p>
+									<p className="label mt-auto pt-5 text-cream/90">{r.author}</p>
 								</li>
 							))}
 						</ul>
 
 						<div className="mt-12 flex flex-wrap items-center gap-x-10 gap-y-3">
-							<p className="label text-cream/75">
+							<p className="label text-cream/90">
 								{CLUB.rating.score} · {CLUB.rating.count} recenzija ·{" "}
 								{CLUB.rating.source}
 							</p>

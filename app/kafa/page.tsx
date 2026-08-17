@@ -97,7 +97,7 @@ export default function KafaPage() {
               <h2 className="display max-w-[14ch] text-[2.4rem] sm:text-[3.2rem]">
                 Dnevni meni je na Instagramu
               </h2>
-              <p className="mt-7 max-w-[40ch] text-[16px] leading-relaxed text-cream/80">
+              <p className="mt-7 max-w-[40ch] text-[16px] leading-relaxed text-cream/85">
                 Ponuda se menja — kroasani, filter i espresso, sezonski dodaci.
                 Najsvežije stanje uvek stoji na profilu kluba.
               </p>

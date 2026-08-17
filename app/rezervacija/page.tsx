@@ -84,7 +84,7 @@ export default async function BookingPage({
         */}
         <section className="bg-green text-cream">
           <div className="mx-auto max-w-[92rem] px-5 py-14 sm:px-8 sm:py-20">
-            <p className="label text-cream/60">Rezervacija</p>
+            <p className="label text-cream/90">Rezervacija</p>
             <h1 className="display mt-5 text-[2.8rem] sm:text-[4.2rem]">
               Izaberi termin
             </h1>
@@ -93,10 +93,10 @@ export default async function BookingPage({
               Potvrdu dobijaš odmah na ekranu, bez poziva.
             </p>
             <div className="mt-8 flex flex-wrap gap-x-9 gap-y-2">
-              <span className="label text-cream/70">
+              <span className="label text-cream/90">
                 {availability.freeCount} slobodnih termina
               </span>
-              <span className="label text-cream/70">{longDateLabel(selected)}</span>
+              <span className="label text-cream/90">{longDateLabel(selected)}</span>
             </div>
           </div>
         </section>

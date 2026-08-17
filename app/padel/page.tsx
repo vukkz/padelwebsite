@@ -142,7 +142,7 @@ function Prices() {
   return (
     <section className="bg-green text-cream">
       <div className="mx-auto max-w-[88rem] px-5 py-20 sm:px-8 sm:py-28">
-        <p className="label text-cream/70">Cene</p>
+        <p className="label text-cream/90">Cene</p>
         <h2 className="display mt-5 max-w-[14ch] text-[2.4rem] sm:text-[3.4rem]">
           Ceo teren, ne po igraču
         </h2>
@@ -150,12 +150,12 @@ function Prices() {
         <div className="mt-16 grid gap-x-8 gap-y-12 border-t border-cream/25 pt-12 sm:grid-cols-2">
           {rows.map((r) => (
             <div key={r.tier} className="flex flex-col gap-4">
-              <span className="label text-cream/70">{r.tier}</span>
+              <span className="label text-cream/90">{r.tier}</span>
               <span className="tabular text-[3.6rem] font-semibold leading-none sm:text-[5rem]">
                 {r.price.toLocaleString("sr-RS")}
-                <span className="label ml-4 align-middle text-cream/70">rsd</span>
+                <span className="label ml-4 align-middle text-cream/90">rsd</span>
               </span>
-              <span className="text-[15px] text-cream/80">
+              <span className="text-[15px] text-cream/85">
                 {r.when} · {SLOT_MINUTES} min · do 4 igrača
               </span>
             </div>
@@ -163,7 +163,7 @@ function Prices() {
         </div>
 
         <div className="mt-14 flex flex-wrap items-baseline gap-x-10 gap-y-3 border-t border-cream/25 pt-8">
-          <p className="text-[15px] text-cream/80">
+          <p className="text-[15px] text-cream/85">
             Plaćanje na licu mesta · otkazivanje bez naknade do 4 sata pre termina
           </p>
           {/*
@@ -171,7 +171,7 @@ function Prices() {
             club's price list, and requires unconfirmed facts to stay visibly
             unconfirmed. They are the largest numerals on the page.
           */}
-          <p className="label text-cream/60">Predlog cenovnika — potvrđuje klub</p>
+          <p className="label text-cream/90">Predlog cenovnika — potvrđuje klub</p>
         </div>
       </div>
     </section>

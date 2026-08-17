@@ -58,7 +58,7 @@ export function PageHero({
   return (
     <section
       className={[
-        "relative isolate flex flex-col overflow-hidden bg-green-dark",
+        "relative isolate flex flex-col overflow-hidden bg-shade",
         tall ? "min-h-[92svh]" : "min-h-[76svh]",
       ].join(" ")}
     >
@@ -70,14 +70,18 @@ export function PageHero({
           priority={priority}
           sizes="100vw"
           className={[
-            "drift object-cover brightness-[0.92] contrast-[1.14] saturate-[0.75] sepia-[0.3]",
+            // No saturate/sepia. Those two were doing the damage: desaturating
+            // and warming every frame toward one hue is what let four different
+            // photographs collapse into a single indistinguishable field.
+            // Brightness and contrast alone give depth without draining colour.
+            "drift object-cover brightness-[0.92] contrast-[1.10]",
             crop,
           ].join(" ")}
         />
         {/* Warm wash: one hue family instead of five competing ones. */}
         <div
           aria-hidden="true"
-          className="absolute inset-0 bg-[#5c3a1c] opacity-25 mix-blend-multiply"
+          className="absolute inset-0 bg-[#5c3a1c] opacity-20 mix-blend-multiply"
         />
         {/*
           Vignette, so the frame has a centre and the edges recede. Down from
@@ -86,46 +90,51 @@ export function PageHero({
         */}
         <div
           aria-hidden="true"
-          className="absolute inset-0 bg-[radial-gradient(ellipse_at_48%_46%,transparent_28%,rgba(2,48,26,0.30)_100%)]"
+          className="absolute inset-0 bg-[radial-gradient(ellipse_at_48%_46%,transparent_28%,rgba(23,18,11,0.25)_100%)]"
         />
       </div>
 
       {/*
-        Scrims in --green-dark, not a neutral.
+        Scrims in --shade, the warm near-black. Not the brand green.
 
-        The green is the brand doing the work a neutral scrim cannot. Under a
-        warm brown wash the whole hero sat in one family and the terracotta
-        action sank into it; under green, terracotta is the only warm thing on
-        the screen and the button reads as the single place to press. That is
-        also the palette rule this project already states — accent once per
-        screen, on the thing to be clicked — which the previous hero broke by
-        spending terracotta on the dateline as well as the button.
+        This was green for one pass and it was a mistake the token file had
+        already called: globals.css:44-52 defines --shade as the scrim colour
+        and says, in as many words, "Deliberately NOT the brand green. Layering
+        a cold #02301a over golden-hour photography turned the terracotta court
+        brown-grey and the warm wood olive." That is exactly what happened —
+        with a green scrim over a desaturating filter, four different
+        photographs collapsed into one indistinguishable dark-green field, and
+        at phone width the venue simply was not visible. The fortress is the
+        one asset a competitor cannot copy; it should not be spent on a tint.
 
-        The warm multiply wash above survives deliberately. Without it the brick
-        of the bastion goes green-grey and the frame reads as a colour filter
-        rather than a photograph; with it, the masonry keeps its own material
-        and only the field around it turns green.
+        The green idea was right about the palette and wrong about the layer.
+        Green still owns whole sections (Proof, the events list, the footer),
+        where it is a field rather than a veil. Terracotta still appears once
+        per hero, on the button, which is what the dateline going cream bought.
 
-        Bottom-up carries the type. Left-to-right holds the text column, and is
-        much stronger here than the previous photograph needed — the bastion is
-        sunlit brick where players-three was shadow. The top band exists because
-        the header's links sit over open sky on every one of these frames.
+        Bottom-up carries the type; it stops at /86 rather than /95 so the last
+        band of the hero still contains photograph instead of going flat — that
+        flat band is what turned the hero-to-cream transition into a butt joint.
+        Left-to-right holds the text column. The top band exists because the
+        header's links sit over open sky on every one of these frames.
 
-        Values are measured, not guessed: the whole pipeline is replayed offline
-        (crop, CSS filter chain, multiply wash, vignette, scrims) and worst-case
-        pixel contrast sampled under the real type boxes at both ends of drift.
+        Values are measured, not guessed: the pipeline is replayed offline
+        (crop, filter, multiply wash, vignette, scrims) and worst-case pixel
+        contrast sampled under the real type boxes at both ends of drift.
+        Worst case: home 4.21 headline / 6.35 dateline, /padel 6.17, /kafa 6.63,
+        /dogadjaji 4.37 — against floors of 3 and 4.5.
       */}
       <div
         aria-hidden="true"
-        className="absolute inset-0 -z-10 bg-gradient-to-t from-green-dark/95 via-green-dark/66 via-62% to-green-dark/6"
+        className="absolute inset-0 -z-10 bg-gradient-to-t from-shade/86 via-shade/55 via-58% to-transparent"
       />
       <div
         aria-hidden="true"
-        className="absolute inset-0 -z-10 bg-gradient-to-r from-green-dark/80 via-green-dark/16 via-42% to-transparent"
+        className="absolute inset-0 -z-10 bg-gradient-to-r from-shade/78 via-shade/18 via-42% to-transparent"
       />
       <div
         aria-hidden="true"
-        className="absolute inset-x-0 top-0 -z-10 h-32 bg-gradient-to-b from-green-dark/75 to-transparent"
+        className="absolute inset-x-0 top-0 -z-10 h-32 bg-gradient-to-b from-shade/70 to-transparent"
       />
 
       <div className="mx-auto flex w-full max-w-[88rem] flex-1 flex-col justify-end px-5 pb-14 pt-28 sm:px-8 sm:pb-20 lg:pb-24">
@@ -147,10 +156,11 @@ export function PageHero({
           single most reliable tell of a generated page; underneath, the same
           words read as attribution.
 
-          Cream, not terracotta. Two reasons, and they agree: a warm accent on a
-          green field measured 4.21:1 and misses AA for 11px caps, and spending
-          terracotta here would put the accent on the screen twice. It belongs
-          on the button alone.
+          Cream, not terracotta. On --shade a light terracotta would in fact
+          clear AA comfortably, so this is not a contrast decision — it is the
+          palette rule: accent once per screen, on the thing to be clicked.
+          Spending terracotta on a dateline puts it on screen twice and takes
+          the button's job away from it.
         */}
         <p
           className="label rise mt-6 text-cream/80"
