@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { CLUB } from "@/lib/config";
+import { NAV } from "@/components/nav-items";
+import { MobileMenu } from "@/components/mobile-menu";
 import { InstagramIcon } from "@/components/icons/instagram";
 
 /**
@@ -11,29 +13,28 @@ import { InstagramIcon } from "@/components/icons/instagram";
  * is space and restraint — the header should be the quietest thing on screen
  * so the photography and the headline can carry the page.
  *
- * Below `sm` the nav gets its own row under the wordmark instead of sharing
- * the line with it.
+ * From `sm` up the three destinations sit on the line with the wordmark, which
+ * is where they belong: there is room, they read at 6.73:1 on flat cream, and a
+ * menu button would be hiding something that already fits.
  *
- * Measured at 390px, the shared line left the nav 87px of the 214px its three
- * links need — the wordmark and the always-visible Rezerviši plate take the
- * rest — and the scroller is `no-scrollbar`, so "Kafa" clipped mid-word and
- * "Događaji" was not on screen at all, with no fade, chevron or bar to say it
- * was there. A phone got exactly one destination and it was PADEL, on a site
- * whose whole argument is that people come for the coffee. /kafa answers every
- * question the primary visitor actually has — shade, children, dogs, parking —
- * and it was the clipped word behind the button.
+ * Below `sm` they move into MobileMenu. Two arrangements were tried on the frame
+ * itself and both failed for the same reason. Sharing the line left the nav 87px
+ * of the 214px its labels need, so "Kafa" clipped mid-word and "Događaji" was
+ * off screen entirely. Giving it its own 45px row fixed the clipping and was
+ * still three letterspaced 11–13px caps in a label rail — legible after the type
+ * and the scrim were corrected, and still cramped, because a 45px band cannot
+ * give large type the air this site's register is built on.
  *
- * Not a hamburger. Hiding the nav behind a breakpoint was the original site's
- * worst structural failure, and a silently clipped scroller is that same
- * failure wearing a different hat. The second row costs 45px and shows all
- * three, on every page, at every width.
+ * An earlier version of this comment argued that no hamburger could be correct
+ * here, on the grounds that hiding the nav is what made the original site
+ * padel-first. That reasoning confused the symptom with the cause. The original
+ * site's failure was that the café was *subordinate* — one clipped word behind a
+ * booking button. In MobileMenu all three destinations are equal and /kafa is set
+ * larger than it has ever been anywhere on this site. Being one tap away is not
+ * the same as being buried.
  */
 
-const NAV = [
-  { href: "/padel", label: "Padel" },
-  { href: "/kafa", label: "Kafa" },
-  { href: "/dogadjaji", label: "Događaji" },
-];
+// Shared with MobileMenu via components/nav-items.ts — see the note there.
 
 /**
  * An underline that grows from the link rather than a filled pill or a boxed
@@ -62,6 +63,10 @@ function NavLink({
       href={href}
       aria-current={active ? "page" : undefined}
       className={[
+        // `sm` and up only — MobileMenu owns the phone. So this is the brand
+        // setting with no responsive escape hatch: 12px caps at 0.16em, which
+        // works here because there is room on the line and the links sit on
+        // flat cream at 6.73:1.
         "group relative flex min-h-11 shrink-0 items-center whitespace-nowrap px-2 text-[12px] font-semibold uppercase tracking-[0.16em] transition-colors",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-terracotta focus-visible:ring-offset-2 focus-visible:ring-offset-transparent",
         // Written out rather than composed: `hover:${...}` builds a class name
@@ -72,7 +77,12 @@ function NavLink({
             ? "text-cream"
             : "text-ink"
           : overlay
-            ? "text-cream/70 hover:text-cream"
+            ? // /85, not /70. page-hero.tsx sampled this strip at 5.08–7.60:1
+              // and then the links shipped at 70% of that — and on the home
+              // page no link is active, so every one of them was the dim
+              // variant. The underline already carries state; opacity does not
+              // need to help.
+              "text-cream/85 hover:text-cream"
             : "text-ink-soft hover:text-ink",
       ].join(" ")}
     >
@@ -120,10 +130,13 @@ export function SiteHeader({
       ].join(" ")}
     >
       <div className="mx-auto max-w-[88rem] px-5 sm:px-8">
-        <div className="flex h-[var(--header-row)] items-center gap-5 sm:gap-12">
+        {/* `gap-3` below `sm`: the row now carries wordmark + plate + menu mark,
+            and at 390px the 20px gap put the three of them 14px over the
+            available width. Desktop is unchanged. */}
+        <div className="flex h-[var(--header-row)] items-center gap-3 sm:gap-12">
           <Link
             href="/"
-            className="wordmark -mx-2 flex min-h-11 shrink-0 items-center px-2 text-[1.5rem] leading-none transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-terracotta focus-visible:ring-offset-4 focus-visible:ring-offset-transparent sm:text-[1.75rem]"
+            className="wordmark -mx-2 flex min-h-11 shrink-0 items-center px-2 text-[1.375rem] leading-none transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-terracotta focus-visible:ring-offset-4 focus-visible:ring-offset-transparent sm:text-[1.75rem]"
           >
             Padel House
           </Link>
@@ -182,29 +195,9 @@ export function SiteHeader({
           >
             Rezerviši
           </Link>
-        </div>
-      </div>
 
-      {/*
-        The second row. A full-bleed hairline above it so it reads as a band of
-        the frame rather than as links that fell off the line above, and the
-        same NavLink as the row it left, so the two breakpoints speak once.
-      */}
-      <div className={`h-[var(--header-nav)] border-t sm:hidden ${rule}`}>
-        <nav
-          aria-label="Glavna navigacija"
-          className="mx-auto flex h-full max-w-[88rem] items-center gap-4 px-3"
-        >
-          {NAV.map((n) => (
-            <NavLink
-              key={n.href}
-              href={n.href}
-              label={n.label}
-              active={active === n.href}
-              overlay={overlay}
-            />
-          ))}
-        </nav>
+          <MobileMenu active={active} overlay={overlay} />
+        </div>
       </div>
     </header>
   );
@@ -217,14 +210,14 @@ export function SiteFooter() {
         <div className="grid gap-12 lg:grid-cols-12">
           <div className="lg:col-span-5">
             <p className="wordmark text-[2rem] sm:text-[2.6rem]">Padel House</p>
-            <p className="label mt-4 text-cream/50">Kalemegdan · Beograd</p>
+            <p className="label mt-4 text-cream/60">Kalemegdan · Beograd</p>
             <p className="mt-8 max-w-[32ch] text-[15px] leading-relaxed text-cream/70">
               {CLUB.address}, {CLUB.addressArea}
             </p>
           </div>
 
           <div className="lg:col-span-3">
-            <p className="label text-cream/50">Radno vreme</p>
+            <p className="label text-cream/60">Radno vreme</p>
             <p className="mt-4 text-[15px] leading-relaxed">
               {CLUB.hoursLabel}
               <span className="mt-2 block text-cream/60">{CLUB.hoursNote}</span>
@@ -232,7 +225,7 @@ export function SiteFooter() {
           </div>
 
           <div className="lg:col-span-4">
-            <p className="label text-cream/50">Kontakt</p>
+            <p className="label text-cream/60">Kontakt</p>
             <div className="mt-4 flex flex-col items-start gap-1">
               <a
                 href={CLUB.phoneHref}
@@ -259,7 +252,7 @@ export function SiteFooter() {
           </div>
         </div>
 
-        <p className="label mt-16 border-t border-cream/15 pt-8 text-cream/40">
+        <p className="label mt-16 border-t border-cream/15 pt-8 text-cream/70">
           © {new Date().getFullYear()} {CLUB.name} {CLUB.city}
         </p>
       </div>

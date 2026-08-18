@@ -76,7 +76,7 @@ export function MyBookings() {
         if (!res.ok && !data.alreadyCancelled) {
           setFailed((f) => ({
             ...f,
-            [booking.token]: data.error ?? "Otkazivanje nije uspelo. Pokušajte ponovo.",
+            [booking.token]: data.error ?? "Otkazivanje nije uspelo. Pokušaj ponovo.",
           }));
           return;
         }
@@ -95,7 +95,7 @@ export function MyBookings() {
       } catch {
         setFailed((f) => ({
           ...f,
-          [booking.token]: "Nema veze sa serverom. Proverite internet i pokušajte ponovo.",
+          [booking.token]: "Nema veze sa serverom. Proveri internet i pokušaj ponovo.",
         }));
       } finally {
         setBusy(null);

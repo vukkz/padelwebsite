@@ -34,7 +34,7 @@ export function CancelPanel({ booking }: { booking: OwnBooking }) {
       const data = await res.json();
 
       if (!res.ok && !data.alreadyCancelled) {
-        setError(data.error ?? "Otkazivanje nije uspelo. Pokušajte ponovo.");
+        setError(data.error ?? "Otkazivanje nije uspelo. Pokušaj ponovo.");
         setState("idle");
         return;
       }
@@ -42,7 +42,7 @@ export function CancelPanel({ booking }: { booking: OwnBooking }) {
       forgetBooking(booking.token);
       setState("done");
     } catch {
-      setError("Nema veze sa serverom. Proverite internet i pokušajte ponovo.");
+      setError("Nema veze sa serverom. Proveri internet i pokušaj ponovo.");
       setState("idle");
     }
   }

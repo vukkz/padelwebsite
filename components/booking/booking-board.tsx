@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { type CSSProperties, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowUpRight, Check, ChevronRight, Phone } from "lucide-react";
+import { ArrowUpRight, Check, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { CANCELLATION_HOURS, CLUB } from "@/lib/config";
@@ -34,6 +34,17 @@ export function BookingBoard({
   const [selection, setSelection] = useState<Selection | null>(null);
   const [success, setSuccess] = useState<BookingSuccess | null>(null);
 
+  /*
+    The draft lives here so it outlives the sheet.
+
+    A 409 unmounts the sheet, and with it went the name and phone the visitor
+    had just typed — for a collision they did not cause. It also survives
+    switching to an offered alternative and "Rezerviši još jedan", both of which
+    are the same person continuing.
+  */
+  const [draftName, setDraftName] = useState("");
+  const [draftPhone, setDraftPhone] = useState("");
+
   if (success) {
     return <SuccessScreen data={success} onReset={() => setSuccess(null)} />;
   }
@@ -63,106 +74,68 @@ export function BookingBoard({
         </p>
       </div>
 
-      {/* ---------------- Mobile: one section per court ---------------- */}
-      <div className="mt-8 space-y-8 md:hidden">
-        {courts.map((court, courtIdx) => (
-          <section key={court.id}>
-            <h3 className="eyebrow rule-t pt-3 text-muted-foreground">{court.name}</h3>
-            <ul className="mt-3 space-y-2">
-              {court.cells.map((cell, i) => {
-                const state = SLOT_STATE[cell.status];
-                const Icon = state.icon;
-                const isFree = cell.status === "free";
-                const label =
-                  cell.status === "blocked" ? cell.blockReason || state.label : state.label;
+      {/*
+        One matrix at every width: times down, courts across.
 
-                return (
-                  <li key={cell.startsAt}>
-                    <button
-                      type="button"
-                      disabled={!isFree}
-                      aria-disabled={!isFree}
-                      aria-label={`${court.name}, ${cell.time}, ${label}${
-                        isFree ? `, ${cell.priceRsd} dinara` : ""
-                      }`}
-                      onClick={() => isFree && setSelection({ cell, courtName: court.name })}
-                      className={cn(
-                        "animate-slot-in flex min-h-[60px] w-full touch-manipulation items-center gap-3 rounded-sm border px-4 py-3 text-left transition-all duration-200",
-                        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-                        state.className,
-                      )}
-                      style={{ animationDelay: `${(courtIdx * 6 + i) * 25}ms` }}
-                    >
-                      <span className="min-w-0 flex-1">
-                        <span className="tabular block text-[17px] font-semibold leading-tight">
-                          {cell.time}
-                          <span className="ml-1.5 text-sm font-normal text-muted-foreground">
-                            – {endTime(cell)}
-                          </span>
-                        </span>
-                        {state.showLabel && (
-                          <span className="mt-0.5 flex items-center gap-1.5 text-xs">
-                            <Icon
-                              className={cn("size-3.5 shrink-0", state.iconClassName)}
-                              aria-hidden="true"
-                            />
-                            <span className="truncate">{label}</span>
-                          </span>
-                        )}
-                      </span>
+        The phone used to get a different control entirely — one stacked section
+        per court, six slots each, 18 buttons spanning ~1250px. That is
+        court-major, and nobody arrives asking what Teren 2 has all day. They
+        arrive with a time in mind, and answering "what is free at 11:00?" meant
+        three separate scans 490px apart plus holding all three answers in
+        working memory to compare them. Here it is one horizontal glance.
 
-                      {isFree && (
-                        <>
-                          <span className="tabular shrink-0 text-right text-[15px] font-semibold text-foreground">
-                            {cell.priceRsd.toLocaleString("sr-RS")}
-                            <span className="eyebrow ml-1.5 text-muted-foreground">rsd</span>
-                          </span>
-                          <ChevronRight
-                            className="size-4 shrink-0 text-clay-500"
-                            aria-hidden="true"
-                          />
-                        </>
-                      )}
-                    </button>
-                  </li>
-                );
-              })}
-            </ul>
-          </section>
+        Below `md` the time gutter narrows and the gaps tighten; the grid, the
+        cells and the six rows are otherwise identical, so the two breakpoints
+        speak once. About 430px on a phone, and it reads as a single ruler
+        rather than three lists that happen to be stacked.
+
+        `--court-count` rather than an interpolated template string: the value is
+        dynamic but the two column settings are not, so this keeps them in
+        Tailwind where the breakpoint lives instead of branching in JS.
+      */}
+      <div
+        className={cn(
+          "mt-8 grid gap-1.5 [grid-template-columns:3.25rem_repeat(var(--court-count),minmax(0,1fr))]",
+          "md:gap-2 md:[grid-template-columns:5.5rem_repeat(var(--court-count),minmax(0,1fr))]",
+        )}
+        style={{ "--court-count": courts.length } as CSSProperties}
+      >
+        <div />
+        {courts.map((court) => (
+          // A ruled label, not a filled pill — green as a background block here
+          // was the single loudest thing on the page and it isn't a control.
+          <div
+            key={court.id}
+            className="eyebrow rule-t pb-3 pt-3 text-center text-muted-foreground"
+          >
+            {court.name}
+          </div>
         ))}
-      </div>
 
-      {/* ---------------- Desktop: courts × slots matrix ---------------- */}
-      <div className="mt-8 hidden md:block">
-        <div
-          className="grid gap-2"
-          style={{ gridTemplateColumns: `5.5rem repeat(${courts.length}, minmax(0, 1fr))` }}
-        >
-          <div />
-          {courts.map((court) => (
-            // A ruled label, not a filled pill — green as a background block here
-            // was the single loudest thing on the page and it isn't a control.
-            <div
-              key={court.id}
-              className="eyebrow rule-t pb-3 pt-3 text-center text-muted-foreground"
-            >
-              {court.name}
-            </div>
-          ))}
-
-          {times.map((time, rowIdx) => (
-            <Row key={time} time={time} courts={courts} rowIdx={rowIdx} onPick={setSelection} />
-          ))}
-        </div>
+        {times.map((time, rowIdx) => (
+          <Row key={time} time={time} courts={courts} rowIdx={rowIdx} onPick={setSelection} />
+        ))}
       </div>
 
       <Legend />
 
       {selection && (
         <BookingSheet
+          /*
+            Keyed on the slot so switching to an offered alternative remounts
+            the sheet: `taken` and the conflict alert reset, while the draft —
+            which lives up here — carries over untouched.
+          */
+          key={`${selection.courtName}-${selection.cell.startsAt}`}
           cell={selection.cell}
           courtName={selection.courtName}
           dateLabel={dateLabel}
+          courts={courts}
+          name={draftName}
+          phone={draftPhone}
+          onNameChange={setDraftName}
+          onPhoneChange={setDraftPhone}
+          onPickAlternative={(cell, courtName) => setSelection({ cell, courtName })}
           onClose={() => setSelection(null)}
           onSuccess={(data) => {
             // Store the token here rather than on the success screen: it is the
@@ -199,8 +172,16 @@ function Row({
 }) {
   return (
     <>
-      <div className="tabular flex items-center justify-end pr-2 text-sm text-muted-foreground">
-        {time}
+      {/*
+        The gutter carries the whole span, not just the start. The stacked
+        mobile list used to print "08:00 – 09:30" in every one of its 18 rows;
+        stating it once per row here says the same thing eighteen times less,
+        and keeps the fact that a slot is 90 minutes visible on the grid rather
+        than only in the legend.
+      */}
+      <div className="tabular flex flex-col items-end justify-center pr-2 leading-tight">
+        <span className="text-[13px] font-semibold text-foreground md:text-sm">{time}</span>
+        <span className="text-[11px] text-muted-foreground">–{endTime(time)}</span>
       </div>
       {courts.map((court) => {
         const cell = court.cells[rowIdx];
@@ -265,7 +246,12 @@ function Legend() {
           </span>
         );
       })}
-      <span className="ml-auto">Termin traje 90 minuta · plaćanje na licu mesta</span>
+      {/* `ml-auto` only once there is a line to push it to the end of. Below
+          `md` the legend is three short items on 358px, and pushing this one
+          right left a ragged hole mid-row. */}
+      <span className="w-full md:ml-auto md:w-auto">
+        Termin traje 90 minuta · plaćanje na licu mesta
+      </span>
       {/*
         The grid states a price in every free cell — the most repeated
         unconfirmed fact on the site, and the surface the club will scrutinise
@@ -407,8 +393,8 @@ function DetailRow({
   );
 }
 
-function endTime(cell: PublicSlotCell): string {
-  const [h, m] = cell.time.split(":").map(Number);
+function endTime(time: string): string {
+  const [h, m] = time.split(":").map(Number);
   const total = h * 60 + m + 90;
   return `${String(Math.floor(total / 60) % 24).padStart(2, "0")}:${String(total % 60).padStart(2, "0")}`;
 }

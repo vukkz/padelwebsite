@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 import { CANCELLATION_HOURS } from "@/lib/config";
 import { sentenceCase } from "@/lib/time";
 import type { PublicSlotCell } from "@/lib/types";
+import type { BoardCourt } from "./booking-board";
 
 export type BookingSuccess = {
   courtName: string;
@@ -31,10 +32,58 @@ type Errors = { name?: string; phone?: string };
 const FOCUSABLE =
   'a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])';
 
+/**
+ * What to offer someone whose slot was taken while they were typing.
+ *
+ * Same time on another court first — that is the constraint most people came
+ * with — then the nearest free time on the court they picked. Both are already
+ * in memory: the board refreshes behind the sheet on a 409, so this reads the
+ * post-collision truth, not the board they clicked.
+ */
+function alternativesFor(courts: BoardCourt[], cell: PublicSlotCell) {
+  const out: { cell: PublicSlotCell; courtName: string; note: string }[] = [];
+
+  for (const c of courts) {
+    if (c.id === cell.courtId) continue;
+    const sameTime = c.cells.find(
+      (x) => x.time === cell.time && x.status === "free" && x.startsAt !== cell.startsAt,
+    );
+    if (sameTime) out.push({ cell: sameTime, courtName: c.name, note: "isto vreme" });
+  }
+
+  const own = courts.find((c) => c.id === cell.courtId);
+  const rowIdx = own?.cells.findIndex((x) => x.startsAt === cell.startsAt) ?? -1;
+  if (own && rowIdx >= 0) {
+    let best: PublicSlotCell | null = null;
+    let bestDistance = Infinity;
+    own.cells.forEach((x, i) => {
+      // Never the slot that just failed. The board refreshes behind the sheet
+      // on a 409, but that is a round-trip we do not wait for — until it lands
+      // this cell still reads `free`, and offering it back would send the
+      // visitor straight into the collision they are recovering from.
+      if (i === rowIdx || x.status !== "free") return;
+      const d = Math.abs(i - rowIdx);
+      if (d < bestDistance) {
+        bestDistance = d;
+        best = x;
+      }
+    });
+    if (best) out.push({ cell: best, courtName: own.name, note: "isti teren" });
+  }
+
+  return out.slice(0, 3);
+}
+
 export function BookingSheet({
   cell,
   courtName,
   dateLabel,
+  courts,
+  name,
+  phone,
+  onNameChange,
+  onPhoneChange,
+  onPickAlternative,
   onClose,
   onSuccess,
   onConflict,
@@ -42,12 +91,26 @@ export function BookingSheet({
   cell: PublicSlotCell;
   courtName: string;
   dateLabel: string;
+  /** The refreshed board, so a collision can offer a way out instead of an instruction. */
+  courts: BoardCourt[];
+  /*
+    Name and phone live in the board, not here.
+
+    A 409 used to unmount this component, and the two fields the visitor had
+    just typed went with it — on a phone, re-typing a full name and a number is
+    most of the cost of booking, and the collision is the system's event, not
+    theirs. Held one level up, the draft survives the sheet closing, the slot
+    changing, and a second booking in the same sitting.
+  */
+  name: string;
+  phone: string;
+  onNameChange: (v: string) => void;
+  onPhoneChange: (v: string) => void;
+  onPickAlternative: (cell: PublicSlotCell, courtName: string) => void;
   onClose: () => void;
   onSuccess: (data: BookingSuccess) => void;
   onConflict: () => void;
 }) {
-  const [name, setName] = useState("");
-  const [phone, setPhone] = useState("");
   const [errors, setErrors] = useState<Errors>({});
   const [formError, setFormError] = useState<string | null>(null);
   const [taken, setTaken] = useState(false);
@@ -168,11 +231,11 @@ export function BookingSheet({
 
   function validate(): boolean {
     const next: Errors = {};
-    if (name.trim().length < 2) next.name = "Unesite ime i prezime.";
+    if (name.trim().length < 2) next.name = "Unesi ime i prezime.";
     // Serbian mobile: 06x followed by 6–7 digits, spaces/dashes tolerated.
     const digits = phone.replace(/[^\d+]/g, "");
     if (!/^(\+3816|06)\d{7,8}$/.test(digits)) {
-      next.phone = "Unesite broj telefona u formatu 06X XXX XXXX.";
+      next.phone = "Unesi broj telefona u formatu 06X XXX XXXX.";
     }
     setErrors(next);
     // Focus the first field that failed. `aria-invalid` on its own changes
@@ -213,7 +276,7 @@ export function BookingSheet({
       }
 
       if (!res.ok) {
-        setFormError(data.error ?? "Došlo je do greške. Pokušajte ponovo.");
+        setFormError(data.error ?? "Došlo je do greške. Pokušaj ponovo.");
         return;
       }
 
@@ -227,13 +290,14 @@ export function BookingSheet({
         startsAt: data.startsAt,
       });
     } catch {
-      setFormError("Nema veze sa serverom. Proverite internet i pokušajte ponovo.");
+      setFormError("Nema veze sa serverom. Proveri internet i pokušaj ponovo.");
     } finally {
       setSubmitting(false);
     }
   }
 
   const timeRange = `${cell.time} – ${endTime(cell.time)}`;
+  const alternatives = taken ? alternativesFor(courts, cell) : [];
 
   const sheet = (
     <div
@@ -329,7 +393,9 @@ export function BookingSheet({
                 <p className="font-semibold">{formError}</p>
                 {taken && (
                   <p className="mt-0.5 opacity-90">
-                    Zatvorite i izaberite drugi termin — lista je osvežena.
+                    {alternatives.length > 0
+                      ? "Ovo je slobodno umesto njega — tvoji podaci ostaju upisani."
+                      : "Ovaj dan je popunjen. Probaj sledeći iz trake sa datumima."}
                   </p>
                 )}
               </div>
@@ -347,7 +413,7 @@ export function BookingSheet({
               id="name"
               ref={nameRef}
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={(e) => onNameChange(e.target.value)}
               autoComplete="name"
               enterKeyHint="next"
               maxLength={60}
@@ -363,7 +429,7 @@ export function BookingSheet({
             htmlFor="phone"
             required
             error={errors.phone}
-            hint="Klub vas zove samo ako nešto iskrsne sa terminom."
+            hint="Klub te zove samo ako nešto iskrsne sa terminom."
           >
             <Input
               id="phone"
@@ -371,7 +437,7 @@ export function BookingSheet({
               type="tel"
               inputMode="tel"
               value={phone}
-              onChange={(e) => setPhone(e.target.value)}
+              onChange={(e) => onPhoneChange(e.target.value)}
               autoComplete="tel"
               enterKeyHint="done"
               maxLength={20}
@@ -383,9 +449,46 @@ export function BookingSheet({
           </Field>
 
           {taken ? (
-            <Button variant="primary" size="lg" className="w-full" onClick={onClose}>
-              Izaberi drugi termin
-            </Button>
+            /*
+              A route, not an instruction.
+
+              This used to be one button that closed the sheet and told the
+              visitor to go find another slot themselves — at the highest-drop-off
+              moment in the product, having just thrown away what they typed.
+              The board behind has already refreshed, so the answer is in memory:
+              offer it, keep the draft, and let them finish in the same panel.
+            */
+            <div className="space-y-2">
+              {alternatives.map((alt) => (
+                <button
+                  key={`${alt.courtName}-${alt.cell.startsAt}`}
+                  type="button"
+                  onClick={() => onPickAlternative(alt.cell, alt.courtName)}
+                  className="flex min-h-[60px] w-full items-center justify-between gap-3 rounded-sm border border-rule bg-card px-4 py-3 text-left transition-colors hover:border-clay-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                >
+                  <span className="min-w-0">
+                    <span className="font-display block text-[1.1rem] text-foreground">
+                      {alt.courtName}
+                    </span>
+                    <span className="tabular mt-0.5 block text-sm text-muted-foreground">
+                      {alt.cell.time} – {endTime(alt.cell.time)} · {alt.note}
+                    </span>
+                  </span>
+                  <span className="tabular shrink-0 text-[15px] font-semibold text-foreground">
+                    {alt.cell.priceRsd.toLocaleString("sr-RS")}
+                    <span className="eyebrow ml-1.5 text-muted-foreground">rsd</span>
+                  </span>
+                </button>
+              ))}
+              <Button
+                variant={alternatives.length > 0 ? "ghost" : "primary"}
+                size="lg"
+                className="w-full"
+                onClick={onClose}
+              >
+                {alternatives.length > 0 ? "Nazad na raspored" : "Izaberi drugi termin"}
+              </Button>
+            </div>
           ) : (
             <Button
               type="submit"

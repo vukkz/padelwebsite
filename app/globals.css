@@ -58,8 +58,16 @@
     the paragraph text it carries across every cream section, not just the hero.
   */
   --ink-soft: #5a5349;
-  /* Faint is for labels and metadata only, never for reading copy. */
-  --ink-faint: #8a7f6f;
+  /*
+    Faint is for labels and metadata only, never for reading copy.
+
+    Deepened from #8a7f6f, which measured 3.48:1 against #f5f1e8. Every use of
+    this token is `.label` — 11px at weight 600 — so it was under AA at all six
+    sites and it was the single most widespread contrast failure on the site.
+    #736858 measures 4.84:1 and is still a clear step lighter than --ink-soft
+    (6.73:1), so the metadata layer stays quieter than the body copy above it.
+  */
+  --ink-faint: #736858;
 
   /* --- Semantic (also consumed by the out-of-scope /admin panel) -------- */
   --background: var(--cream);
@@ -89,27 +97,29 @@
     The header's height, single-sourced, because two things have to agree on it
     and only one of them can see it: the sticky date strip on /rezervacija has
     to pin exactly under the header, and it was doing that with a hard-coded
-    `top-16`. That was already 17px short of an 80px header before the nav
-    moved to its own row; once it did, it would have been 61px short.
+    `top-16`. That was already 17px short of an 80px header.
 
-    So the header reads its row heights from here and the strip reads the sum.
-    Change a row height and the strip follows.
+    So the header reads its row height from here and the strip reads the sum.
+    Change the row and the strip follows.
+
+    There was a second `--header-nav` row here while the phone carried its nav
+    on the frame. The nav moved into MobileMenu, so the header is one row again
+    at every width — and the variable had to go with it rather than be zeroed,
+    because a 45px phantom in this sum pins the strip 45px below the rule it is
+    supposed to hang from.
   */
   --header-row: 5rem;
-  /* 44px of link plus its hairline rule. Below `sm` only. */
-  --header-nav: 2.8125rem;
   /*
-    The trailing 1px is the header's own bottom rule, which sits outside both
-    row heights. Without it the strip pins a pixel high and covers the rule it
-    is supposed to sit under — measured 126px against a 125px offset.
+    The trailing 1px is the header's own bottom rule, which sits outside the row
+    height. Without it the strip pins a pixel high and covers the rule it is
+    supposed to sit under — measured 126px against a 125px offset.
   */
-  --header-h: calc(var(--header-row) + var(--header-nav) + 1px);
+  --header-h: calc(var(--header-row) + 1px);
 }
 
 @media (width >= 40rem) {
   :root {
     --header-row: 6rem;
-    --header-nav: 0px;
   }
 }
 

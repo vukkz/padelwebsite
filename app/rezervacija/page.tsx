@@ -73,32 +73,34 @@ export default async function BookingPage({
       <SiteHeader active="/rezervacija" />
       <main className="flex-1">
         {/*
-          Operate, not Persuade. The world dresses this surface — the ink field,
-          the spec cells, the square corners — but the grid's job outranks every
-          expressive move on it, so the panel voice stops at the heading and the
-          board itself stays a legible timetable.
-        */}
-        {/*
           Operate, not Persuade. The brand dresses the opening block — emerald
-          ground, campaign caps, letterspaced labels — and then stops, so the
-          grid below stays a legible timetable rather than a styled one.
+          ground, campaign caps — and then stops, so the grid below stays a
+          legible timetable rather than a styled one.
+
+          Sized for the phone first, because this block was the reason the phone
+          had nothing bookable in its first screen: 413px of banner pushed the
+          first tappable slot to y=989 on an 844px viewport. Three things went.
+
+          The "Rezervacija" eyebrow: it pre-announced a heading that carries
+          itself, on the one surface where the visitor already knows why they
+          are here.
+
+          The date and free-count pair: the board states both 200px lower, next
+          to the grid they describe, which is where a number like "13 slobodnih"
+          is actually useful. Stating them twice cost 40px to say nothing new.
+
+          And the vertical padding, which is a Persuade setting on an Operate
+          surface. Desktop keeps the full block; it has the room.
         */}
         <section className="bg-green text-cream">
-          <div className="mx-auto max-w-[92rem] px-5 py-14 sm:px-8 sm:py-20">
-            <p className="label text-cream/90">Rezervacija</p>
-            <h1 className="display mt-5 text-[2.8rem] sm:text-[4.2rem]">
+          <div className="mx-auto max-w-[92rem] px-5 py-7 sm:px-8 sm:py-20">
+            <h1 className="display text-[1.75rem] sm:text-[4.2rem]">
               Izaberi termin
             </h1>
-            <p className="mt-6 max-w-[46ch] text-[16px] leading-relaxed text-cream/85">
+            <p className="mt-3 max-w-[46ch] text-[15px] leading-relaxed text-cream/85 sm:mt-6 sm:text-[16px]">
               Cena je za ceo teren po terminu od {SLOT_MINUTES} minuta — ne po igraču.
               Potvrdu dobijaš odmah na ekranu, bez poziva.
             </p>
-            <div className="mt-8 flex flex-wrap gap-x-9 gap-y-2">
-              <span className="label text-cream/90">
-                {availability.freeCount} slobodnih termina
-              </span>
-              <span className="label text-cream/90">{longDateLabel(selected)}</span>
-            </div>
           </div>
         </section>
 

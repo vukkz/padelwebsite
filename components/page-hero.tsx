@@ -118,14 +118,14 @@ export function PageHero({
         Left-to-right holds the text column. The top band exists because the
         header's links sit over open sky on every one of these frames.
 
-        The top band is taller below `sm` because the nav moved to a second row
-        and its labels now sit at y 88–118, where a 128px band has already
-        decayed to almost nothing. Replaying the pipeline offline over the real
-        photographs at 390px, worst-case cream-on-frame in that strip: /padel
-        3.86, /kafa 3.91, /dogadjaji 3.88 — all under the 4.5 floor. At 176px
-        the same band clears it everywhere: 5.08, 5.14, 5.12, home 7.60. The
-        peak stays /70, so this costs no extra darkness at the top edge; only
-        the falloff is slower, and only where the second row exists.
+        The top band was taller below `sm` for one reason: the phone's nav sat
+        on a second header row at y 88–118, where a 128px band has decayed to
+        almost nothing, and cream-on-frame there measured 3.86–3.91 against a
+        4.5 floor. That row is gone — the nav is in MobileMenu now — so the band
+        goes back to 128px at every width. What still sits over the photograph
+        up here is the wordmark and the menu mark at y ~40, near the band's
+        full-strength end, and 1.375rem type against a 3:1 floor rather than
+        11px against 4.5.
 
         Values are measured, not guessed: the pipeline is replayed offline
         (crop, filter, multiply wash, vignette, scrims) and worst-case pixel
@@ -143,7 +143,7 @@ export function PageHero({
       />
       <div
         aria-hidden="true"
-        className="absolute inset-x-0 top-0 -z-10 h-44 bg-gradient-to-b from-shade/70 to-transparent sm:h-32"
+        className="absolute inset-x-0 top-0 -z-10 h-32 bg-gradient-to-b from-shade/70 to-transparent"
       />
 
       <div className="mx-auto flex w-full max-w-[88rem] flex-1 flex-col justify-end px-5 pb-14 pt-28 sm:px-8 sm:pb-20 lg:pb-24">
