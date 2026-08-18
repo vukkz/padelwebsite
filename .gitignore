@@ -44,3 +44,8 @@ next-env.d.ts
 /.agents/
 /.claude/skills/higgsfield-*/
 /skills-lock.json
+
+# impeccable design comps — ~24MB of PNG/JPG that nothing serves.
+# The critiques and surface briefs under .impeccable/ stay tracked; only the
+# generated imagery is ignored.
+/.impeccable/mocks/
