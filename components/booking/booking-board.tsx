@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowUpRight, Check, ChevronRight, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { CLUB } from "@/lib/config";
+import { CANCELLATION_HOURS, CLUB } from "@/lib/config";
+import { rememberBooking } from "@/lib/own-bookings";
 import { sentenceCase } from "@/lib/time";
 import type { PublicSlotCell } from "@/lib/types";
 import { SLOT_STATE } from "./slot-styles";
@@ -164,6 +165,12 @@ export function BookingBoard({
           dateLabel={dateLabel}
           onClose={() => setSelection(null)}
           onSuccess={(data) => {
+            // Store the token here rather than on the success screen: it is the
+            // only copy that will ever exist, and it must survive the player
+            // closing the tab before that screen finishes rendering.
+            if (data.cancelToken) {
+              rememberBooking({ token: data.cancelToken, startsAt: data.startsAt });
+            }
             setSelection(null);
             setSuccess(data);
             router.refresh();
@@ -210,7 +217,15 @@ function Row({
             disabled={!isFree}
             aria-disabled={!isFree}
             aria-label={`${court.name}, ${time}, ${label}${isFree ? `, ${cell.priceRsd} dinara` : ""}`}
-            onClick={() => isFree && onPick({ cell, courtName: court.name })}
+            onClick={(e) => {
+              if (!isFree) return;
+              // Take focus before opening. The sheet restores focus to whatever
+              // held it, and Safari — iOS in particular, which is most of this
+              // traffic — does not focus a button when it is tapped. Without
+              // this the sheet opens from <body> and has nothing to give back.
+              e.currentTarget.focus();
+              onPick({ cell, courtName: court.name });
+            }}
             className={cn(
               "animate-slot-in flex min-h-[62px] flex-col items-center justify-center gap-0.5 rounded-sm border px-2 py-2 transition-all duration-200",
               "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
@@ -256,6 +271,19 @@ function Legend() {
 }
 
 function SuccessScreen({ data, onReset }: { data: BookingSuccess; onReset: () => void }) {
+  const headingRef = useRef<HTMLHeadingElement>(null);
+
+  /*
+    The sheet hands focus back to whatever opened it, but the success path
+    unmounts the board along with the sheet, so that slot button no longer
+    exists and focus lands on <body>. For a keyboard or screen reader user the
+    booking would simply complete in silence. Take it here instead: the heading
+    both confirms and names the booking.
+  */
+  useEffect(() => {
+    headingRef.current?.focus();
+  }, []);
+
   return (
     <div className="animate-fade-in rule-t mt-8 pt-12 pb-8">
       {/* Left-aligned like every other block on the site — centring it here made
@@ -265,7 +293,11 @@ function SuccessScreen({ data, onReset }: { data: BookingSuccess; onReset: () =>
           <Check className="size-4" aria-hidden="true" />
           Potvrđeno
         </p>
-        <h2 className="font-display mt-4 text-[2.1rem] text-foreground sm:text-[2.5rem]">
+        <h2
+          ref={headingRef}
+          tabIndex={-1}
+          className="font-display mt-4 text-[2.1rem] text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-4 sm:text-[2.5rem]"
+        >
           Vidimo se na terenu, {data.customerName.split(" ")[0]}.
         </h2>
         <p className="mt-4 text-[15px] leading-relaxed text-muted-foreground">
@@ -285,6 +317,27 @@ function SuccessScreen({ data, onReset }: { data: BookingSuccess; onReset: () =>
           <DetailRow label="Vreme" value={data.timeRange} />
           <DetailRow label="Cena" value={data.priceLabel} strong />
         </dl>
+
+        {/*
+          The way out, stated at the moment the commitment is made rather than
+          left for the player to discover they do not have. Quiet on purpose:
+          terracotta is the accent and it is already spent on the button below,
+          and a cancellation link competing with the confirmation would be
+          reading the room badly.
+        */}
+        {data.cancelToken && (
+          <p className="mt-8 text-[15px] leading-relaxed text-muted-foreground">
+            Planovi se menjaju?{" "}
+            <Link
+              href={`/otkazivanje/${data.cancelToken}`}
+              className="text-foreground underline decoration-rule underline-offset-4 transition-colors hover:decoration-foreground"
+            >
+              Otkaži rezervaciju
+            </Link>{" "}
+            — besplatno do {CANCELLATION_HOURS} sata pre termina. Termin te čeka i na
+            ovoj stranici, na ovom telefonu.
+          </p>
+        )}
 
         <div className="mt-10 flex flex-wrap items-center gap-5">
           <Button variant="accent" size="lg" onClick={onReset}>

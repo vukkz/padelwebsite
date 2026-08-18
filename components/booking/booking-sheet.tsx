@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { AlertCircle, Loader2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Field, Input } from "@/components/ui/field";
 import { cn } from "@/lib/utils";
+import { CANCELLATION_HOURS } from "@/lib/config";
 import { sentenceCase } from "@/lib/time";
 import type { PublicSlotCell } from "@/lib/types";
 
@@ -14,9 +16,20 @@ export type BookingSuccess = {
   timeRange: string;
   priceLabel: string;
   customerName: string;
+  /** The only copy of the cancellation credential the player will ever get. */
+  cancelToken: string;
+  startsAt: string;
 };
 
 type Errors = { name?: string; phone?: string };
+
+/**
+ * Tab stops inside the panel. `:not([disabled])` matters here rather than being
+ * boilerplate: a 409 disables both inputs and swaps the submit button out, so
+ * the set this returns changes shape mid-dialog.
+ */
+const FOCUSABLE =
+  'a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])';
 
 export function BookingSheet({
   cell,
@@ -40,20 +53,118 @@ export function BookingSheet({
   const [taken, setTaken] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const nameRef = useRef<HTMLInputElement>(null);
+  const phoneRef = useRef<HTMLInputElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const alertRef = useRef<HTMLDivElement>(null);
 
+  // The parent passes `onClose={() => setSelection(null)}` — a new identity on
+  // every render. Read it through a ref so the effects below can key on [] and
+  // mean it.
+  const closeRef = useRef(onClose);
   useEffect(() => {
-    nameRef.current?.focus();
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
-    document.addEventListener("keydown", onKey);
-    // Stop the page behind the sheet from scrolling under the user's thumb.
-    const prev = document.body.style.overflow;
+    closeRef.current = onClose;
+  });
+
+  /*
+    The whole modal lifecycle, in one effect because the steps are ordered and
+    the order is not obvious.
+
+    Opening: remember who opened us, lock the page behind — no scrolling under
+    the thumb, nothing reachable by Tab or by a screen reader's browse mode —
+    and take focus. `inert` is what makes this a modal rather than a panel that
+    merely looks like one: without it, tabbing past "Potvrdi rezervaciju" put a
+    keyboard user silently into the 18-button slot grid behind the overlay,
+    still able to book a different court through a dialog they could not see.
+
+    Closing: un-inert *before* restoring focus. Split across two effects, React
+    runs the cleanups in declaration order, and a restore that fires while the
+    background is still inert is refused by the browser — focus drops to <body>
+    and the caret vanishes. Measured exactly that before merging them.
+
+    Once, not per render. This used to share an effect with the key listener
+    keyed on `[onClose]`, and the parent passes a fresh closure every time, so a
+    `router.refresh()` after a 409 re-ran it and yanked focus back into the name
+    field while the user was typing their phone number.
+  */
+  useEffect(() => {
+    const opener = document.activeElement as HTMLElement | null;
+    const root = rootRef.current;
+    const prevOverflow = document.body.style.overflow;
+
     document.body.style.overflow = "hidden";
+    const behind = [...document.body.children].filter(
+      (el) => el !== root && !el.hasAttribute("inert"),
+    );
+    behind.forEach((el) => el.setAttribute("inert", ""));
+
+    nameRef.current?.focus();
+
     return () => {
-      document.removeEventListener("keydown", onKey);
-      document.body.style.overflow = prev;
+      behind.forEach((el) => el.removeAttribute("inert"));
+      document.body.style.overflow = prevOverflow;
+      // On the success path the board unmounts with the sheet, so the slot
+      // button that opened it is gone. SuccessScreen takes focus instead.
+      if (opener?.isConnected) opener.focus();
     };
-  }, [onClose]);
+  }, []);
+
+  /*
+    Escape, and a Tab cycle within the panel.
+
+    `inert` alone would stop Tab escaping, but it would hand focus to the
+    browser chrome at each end rather than wrapping, and it cannot recover the
+    case where focus has already been dropped: when a 409 disables both inputs
+    and replaces the submit button, the focused element is unmounted and focus
+    falls to <body>. Hence the listener is on the document, in the capture
+    phase, and treats "outside the panel" as a position to pull back from.
+  */
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        closeRef.current();
+        return;
+      }
+      if (e.key !== "Tab") return;
+
+      const panel = panelRef.current;
+      if (!panel) return;
+
+      const stops = [...panel.querySelectorAll<HTMLElement>(FOCUSABLE)].filter(
+        (el) => el.offsetWidth > 0 || el.offsetHeight > 0,
+      );
+      if (stops.length === 0) {
+        e.preventDefault();
+        return;
+      }
+
+      const first = stops[0];
+      const last = stops[stops.length - 1];
+      const inside = panel.contains(document.activeElement);
+
+      if (e.shiftKey && (!inside || document.activeElement === first)) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && (!inside || document.activeElement === last)) {
+        e.preventDefault();
+        first.focus();
+      }
+    }
+
+    document.addEventListener("keydown", onKey, true);
+    return () => document.removeEventListener("keydown", onKey, true);
+  }, []);
+
+  /*
+    A failure from the server is the one thing here that a keyboard or screen
+    reader user has no other way to notice — and on a 409 it also drops focus,
+    per above. Move to the alert: it is read out, and the recovery button is the
+    next stop from there.
+  */
+  useEffect(() => {
+    if (formError) alertRef.current?.focus();
+  }, [formError]);
 
   function validate(): boolean {
     const next: Errors = {};
@@ -64,6 +175,11 @@ export function BookingSheet({
       next.phone = "Unesite broj telefona u formatu 06X XXX XXXX.";
     }
     setErrors(next);
+    // Focus the first field that failed. `aria-invalid` on its own changes
+    // nothing a screen reader announces, and on a phone the offending field is
+    // often behind the keyboard by the time the user submits.
+    if (next.name) nameRef.current?.focus();
+    else if (next.phone) phoneRef.current?.focus();
     return Object.keys(next).length === 0;
   }
 
@@ -107,6 +223,8 @@ export function BookingSheet({
         timeRange: data.timeRange,
         priceLabel: data.priceLabel,
         customerName: name.trim(),
+        cancelToken: data.cancelToken,
+        startsAt: data.startsAt,
       });
     } catch {
       setFormError("Nema veze sa serverom. Proverite internet i pokušajte ponovo.");
@@ -117,27 +235,41 @@ export function BookingSheet({
 
   const timeRange = `${cell.time} – ${endTime(cell.time)}`;
 
-  return (
+  const sheet = (
     <div
+      ref={rootRef}
       className="fixed inset-0 z-50 flex items-end justify-center sm:items-center"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="sheet-title"
     >
+      {/*
+        Pointer-only dismissal, deliberately outside the accessibility tree.
+
+        It was a real `<button aria-label="Zatvori">` covering the viewport, so
+        every sheet announced "Zatvori" twice and spent a tab stop on a control
+        that duplicates the X. Escape and the X are the keyboard routes; this is
+        just the tap-outside gesture.
+      */}
       <button
         type="button"
-        aria-label="Zatvori"
+        tabIndex={-1}
+        aria-hidden="true"
         onClick={onClose}
         className="animate-fade-in absolute inset-0 cursor-default bg-green-950/50 backdrop-blur-[2px]"
       />
 
       {/*
+        The dialog is the panel, not the panel plus its backdrop — the role sat
+        on the container above, which meant the backdrop button counted as
+        dialog content.
+
         The rise-from-the-bottom animation is the platform sheet idiom on a
         phone; on desktop the same panel is centred, so it would be sliding in
         from nowhere. Gate the motion to the breakpoint that earns it.
       */}
       <div
         ref={panelRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="sheet-title"
         className={cn(
           "animate-sheet-up relative w-full max-w-md rounded-t-lg border border-rule bg-card",
           "sm:animate-fade-in sm:rounded-sm",
@@ -182,8 +314,11 @@ export function BookingSheet({
           {formError && (
             <div
               role="alert"
+              ref={alertRef}
+              tabIndex={-1}
               className={cn(
                 "flex items-start gap-2.5 rounded-sm px-3.5 py-3 text-sm",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
                 taken
                   ? "bg-warning-soft text-warning"
                   : "bg-destructive-soft text-destructive",
@@ -232,6 +367,7 @@ export function BookingSheet({
           >
             <Input
               id="phone"
+              ref={phoneRef}
               type="tel"
               inputMode="tel"
               value={phone}
@@ -270,12 +406,23 @@ export function BookingSheet({
           )}
 
           <p className="text-center text-xs text-muted-foreground">
-            Plaćanje na licu mesta. Otkazivanje najkasnije 4 sata pre termina.
+            Plaćanje na licu mesta. Otkazivanje najkasnije {CANCELLATION_HOURS} sata pre
+            termina, sa linka koji dobijaš odmah posle rezervacije.
           </p>
         </form>
       </div>
     </div>
   );
+
+  /*
+    Portalled to <body> for two reasons. `inert` on the background is then just
+    "every other child of body" instead of a walk up the board's ancestors
+    inerting siblings at each level; and a `position: fixed` overlay nested in
+    the page is one `transform` or `filter` on an ancestor away from being
+    clipped into it. The sheet is already `fixed inset-0 z-50`, so nothing about
+    how it renders changes.
+  */
+  return typeof document === "undefined" ? null : createPortal(sheet, document.body);
 }
 
 function endTime(time: string): string {

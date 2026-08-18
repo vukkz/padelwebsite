@@ -185,4 +185,18 @@ export const PEAK_START_HOUR = 17;
 /** How far ahead the public booking page lets people book. */
 export const BOOKING_DAYS_AHEAD = 14;
 
+/**
+ * Free cancellation window, in hours before the slot starts.
+ *
+ * Stated in copy on three surfaces and enforced server-side on the cancellation
+ * path. It lived only as the literal "4" inside two sentences before there was
+ * anything to enforce it; changing the policy meant finding every sentence.
+ *
+ * Careful when changing it: the surrounding copy reads "{n} sata", which is the
+ * Serbian paucal and is correct for 2–4. At 5 and above it has to become
+ * "sati", and at 1 "sat". Every call site is a plain sentence, not a plural
+ * rule, so the word has to be changed by hand alongside the number.
+ */
+export const CANCELLATION_HOURS = 4;
+
 export const COURT_NAMES = ["Teren 1", "Teren 2", "Teren 3"] as const;

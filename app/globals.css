@@ -83,6 +83,34 @@
   --success: var(--green);
   --warning: #8a6420;
   --warning-soft: #f7efdc;
+
+  /* --- Frame metrics --------------------------------------------------- */
+  /*
+    The header's height, single-sourced, because two things have to agree on it
+    and only one of them can see it: the sticky date strip on /rezervacija has
+    to pin exactly under the header, and it was doing that with a hard-coded
+    `top-16`. That was already 17px short of an 80px header before the nav
+    moved to its own row; once it did, it would have been 61px short.
+
+    So the header reads its row heights from here and the strip reads the sum.
+    Change a row height and the strip follows.
+  */
+  --header-row: 5rem;
+  /* 44px of link plus its hairline rule. Below `sm` only. */
+  --header-nav: 2.8125rem;
+  /*
+    The trailing 1px is the header's own bottom rule, which sits outside both
+    row heights. Without it the strip pins a pixel high and covers the rule it
+    is supposed to sit under — measured 126px against a 125px offset.
+  */
+  --header-h: calc(var(--header-row) + var(--header-nav) + 1px);
+}
+
+@media (width >= 40rem) {
+  :root {
+    --header-row: 6rem;
+    --header-nav: 0px;
+  }
 }
 
 @theme inline {

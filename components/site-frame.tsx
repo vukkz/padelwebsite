@@ -11,9 +11,22 @@ import { InstagramIcon } from "@/components/icons/instagram";
  * is space and restraint — the header should be the quietest thing on screen
  * so the photography and the headline can carry the page.
  *
- * The nav still scrolls horizontally rather than collapsing, which is what
- * fixed the original site's worst structural failure: four anchors hidden
- * behind `lg:` meant a phone got no navigation at all.
+ * Below `sm` the nav gets its own row under the wordmark instead of sharing
+ * the line with it.
+ *
+ * Measured at 390px, the shared line left the nav 87px of the 214px its three
+ * links need — the wordmark and the always-visible Rezerviši plate take the
+ * rest — and the scroller is `no-scrollbar`, so "Kafa" clipped mid-word and
+ * "Događaji" was not on screen at all, with no fade, chevron or bar to say it
+ * was there. A phone got exactly one destination and it was PADEL, on a site
+ * whose whole argument is that people come for the coffee. /kafa answers every
+ * question the primary visitor actually has — shade, children, dogs, parking —
+ * and it was the clipped word behind the button.
+ *
+ * Not a hamburger. Hiding the nav behind a breakpoint was the original site's
+ * worst structural failure, and a silently clipped scroller is that same
+ * failure wearing a different hat. The second row costs 45px and shows all
+ * three, on every page, at every width.
  */
 
 const NAV = [
@@ -21,6 +34,59 @@ const NAV = [
   { href: "/kafa", label: "Kafa" },
   { href: "/dogadjaji", label: "Događaji" },
 ];
+
+/**
+ * An underline that grows from the link rather than a filled pill or a boxed
+ * cell. At this level of brand the nav should be the quietest thing on screen;
+ * state is carried by a 1px rule, not by a container.
+ *
+ * `px-2` is a touch target, not spacing: "Kafa" is short enough that the link
+ * measured 40px wide against a 44px floor, at every breakpoint. The padding is
+ * cancelled by `-mx-2` on the nav so the first link's *text* still aligns to
+ * the gutter, and the underline insets to match so it hugs the word rather
+ * than the target.
+ */
+function NavLink({
+  href,
+  label,
+  active,
+  overlay,
+}: {
+  href: string;
+  label: string;
+  active: boolean;
+  overlay?: boolean;
+}) {
+  return (
+    <Link
+      href={href}
+      aria-current={active ? "page" : undefined}
+      className={[
+        "group relative flex min-h-11 shrink-0 items-center whitespace-nowrap px-2 text-[12px] font-semibold uppercase tracking-[0.16em] transition-colors",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-terracotta focus-visible:ring-offset-2 focus-visible:ring-offset-transparent",
+        // Written out rather than composed: `hover:${...}` builds a class name
+        // the Tailwind scanner never sees as a literal, so the hover state only
+        // worked here because other files happened to emit the same utility.
+        active
+          ? overlay
+            ? "text-cream"
+            : "text-ink"
+          : overlay
+            ? "text-cream/70 hover:text-cream"
+            : "text-ink-soft hover:text-ink",
+      ].join(" ")}
+    >
+      {label}
+      <span
+        aria-hidden="true"
+        className={[
+          "absolute inset-x-2 bottom-[26%] h-px origin-left bg-current transition-transform duration-300 ease-out motion-reduce:transition-none",
+          active ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100",
+        ].join(" ")}
+      />
+    </Link>
+  );
+}
 
 export function SiteHeader({
   active,
@@ -34,6 +100,15 @@ export function SiteHeader({
   const rule = overlay ? "border-cream/20" : "border-rule";
   const dim = overlay ? "text-cream/70" : "text-ink-soft";
 
+  /*
+    /rezervacija is deliberately not in NAV — the booking plate already points
+    at it, and listing it twice would be the frame arguing with itself. But the
+    page was passing `active="/rezervacija"` into a nav with nowhere to put it,
+    so the one surface where a visitor is mid-task showed no location at all.
+    The plate carries the state instead: current page, already pressed.
+  */
+  const onBooking = active === "/rezervacija";
+
   return (
     <header
       className={[
@@ -45,7 +120,7 @@ export function SiteHeader({
       ].join(" ")}
     >
       <div className="mx-auto max-w-[88rem] px-5 sm:px-8">
-        <div className="flex h-20 items-center gap-5 sm:h-24 sm:gap-12">
+        <div className="flex h-[var(--header-row)] items-center gap-5 sm:gap-12">
           <Link
             href="/"
             className="wordmark -mx-2 flex min-h-11 shrink-0 items-center px-2 text-[1.5rem] leading-none transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-terracotta focus-visible:ring-offset-4 focus-visible:ring-offset-transparent sm:text-[1.75rem]"
@@ -53,40 +128,24 @@ export function SiteHeader({
             Padel House
           </Link>
 
-          {/*
-            An underline that grows from the link rather than a filled pill or a
-            boxed cell. At this level of brand the nav should be the quietest
-            thing on screen; state is carried by a 1px rule, not by a container.
-          */}
           <nav
             aria-label="Glavna navigacija"
-            className="no-scrollbar -mx-2 flex min-w-0 flex-1 items-center gap-4 overflow-x-auto px-2 sm:gap-8"
+            className="-mx-2 hidden min-w-0 flex-1 items-center gap-4 sm:flex"
           >
-            {NAV.map((n) => {
-              const isActive = active === n.href;
-              return (
-                <Link
-                  key={n.href}
-                  href={n.href}
-                  aria-current={isActive ? "page" : undefined}
-                  className={[
-                    "group relative flex min-h-11 shrink-0 items-center whitespace-nowrap text-[12px] font-semibold uppercase tracking-[0.16em] transition-colors",
-                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-terracotta focus-visible:ring-offset-2 focus-visible:ring-offset-transparent",
-                    isActive ? base : `${dim} hover:${overlay ? "text-cream" : "text-ink"}`,
-                  ].join(" ")}
-                >
-                  {n.label}
-                  <span
-                    aria-hidden="true"
-                    className={[
-                      "absolute inset-x-0 bottom-[26%] h-px origin-left bg-current transition-transform duration-300 ease-out motion-reduce:transition-none",
-                      isActive ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100",
-                    ].join(" ")}
-                  />
-                </Link>
-              );
-            })}
+            {NAV.map((n) => (
+              <NavLink
+                key={n.href}
+                href={n.href}
+                label={n.label}
+                active={active === n.href}
+                overlay={overlay}
+              />
+            ))}
           </nav>
+
+          {/* Below `sm` the nav has left this row, so nothing is left to hold
+              the plate against the right edge. */}
+          <span aria-hidden="true" className="flex-1 sm:hidden" />
 
           <a
             href={CLUB.phoneHref}
@@ -103,10 +162,11 @@ export function SiteHeader({
             all — while the hero CTA measured 29px below an 844px fold. So the
             dominant context had no way to book without scrolling, against the
             one hard requirement this project states. Narrower padding at the
-            smallest size keeps it off the nav rather than hiding it.
+            smallest size keeps it off the wordmark rather than hiding it.
           */}
           <Link
             href="/rezervacija"
+            aria-current={onBooking ? "page" : undefined}
             className={[
               "inline-flex h-11 shrink-0 items-center px-4 text-[13px] font-semibold tracking-[0.06em] uppercase transition-colors sm:px-6",
               "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-terracotta",
@@ -115,12 +175,36 @@ export function SiteHeader({
               // that screen behave as one control.
               overlay
                 ? "bg-cream text-ink hover:bg-terracotta hover:text-white"
-                : "bg-terracotta text-white hover:bg-terracotta-deep",
+                : onBooking
+                  ? "bg-terracotta-deep text-white"
+                  : "bg-terracotta text-white hover:bg-terracotta-deep",
             ].join(" ")}
           >
             Rezerviši
           </Link>
         </div>
+      </div>
+
+      {/*
+        The second row. A full-bleed hairline above it so it reads as a band of
+        the frame rather than as links that fell off the line above, and the
+        same NavLink as the row it left, so the two breakpoints speak once.
+      */}
+      <div className={`h-[var(--header-nav)] border-t sm:hidden ${rule}`}>
+        <nav
+          aria-label="Glavna navigacija"
+          className="mx-auto flex h-full max-w-[88rem] items-center gap-4 px-3"
+        >
+          {NAV.map((n) => (
+            <NavLink
+              key={n.href}
+              href={n.href}
+              label={n.label}
+              active={active === n.href}
+              overlay={overlay}
+            />
+          ))}
+        </nav>
       </div>
     </header>
   );

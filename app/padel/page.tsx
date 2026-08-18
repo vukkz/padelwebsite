@@ -1,6 +1,12 @@
 import Image from "next/image";
 import type { Metadata } from "next";
-import { CLUB, PRICES_RSD, SLOT_MINUTES, SLOT_START_TIMES } from "@/lib/config";
+import {
+  CANCELLATION_HOURS,
+  CLUB,
+  PRICES_RSD,
+  SLOT_MINUTES,
+  SLOT_START_TIMES,
+} from "@/lib/config";
 import { SiteFooter, SiteHeader } from "@/components/site-frame";
 import { PageHero } from "@/components/page-hero";
 import { ActionLink } from "@/components/stamp-cta";
@@ -164,7 +170,8 @@ function Prices() {
 
         <div className="mt-14 flex flex-wrap items-baseline gap-x-10 gap-y-3 border-t border-cream/25 pt-8">
           <p className="text-[15px] text-cream/85">
-            Plaćanje na licu mesta · otkazivanje bez naknade do 4 sata pre termina
+            Plaćanje na licu mesta · otkazivanje bez naknade do {CANCELLATION_HOURS} sata pre
+            termina
           </p>
           {/*
             PRODUCT.md records these figures as a market estimate rather than the

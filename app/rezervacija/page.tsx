@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { SiteFooter, SiteHeader } from "@/components/site-frame";
 import { DateStrip, type DayChip } from "@/components/booking/date-strip";
 import { BookingBoard } from "@/components/booking/booking-board";
+import { MyBookings } from "@/components/booking/my-bookings";
 import { SetupNotice } from "@/components/setup-notice";
 import { firstOpenDay, getDayAvailability } from "@/lib/availability";
 import { isSupabaseConfigured } from "@/lib/supabase";
@@ -115,10 +116,25 @@ export default async function BookingPage({
             Opaque, not translucent-with-blur: the page background is a flat
             colour, so the blur bought nothing and its compositing layer rendered
             as a faintly visible panel behind the chips.
+
+            The offset reads --header-h rather than restating it. It was
+            `top-16 sm:top-20` against an 80/96px header, so the strip pinned
+            17px under the header rule and the first chips were clipped at both
+            breakpoints. Two files holding the same number is how that happens;
+            now globals.css holds it and both read from there.
           */}
-          <div className="sticky top-16 z-20 -mx-5 min-w-0 border-b border-rule bg-cream px-5 pb-3 pt-4 sm:top-20 sm:-mx-8 sm:px-8">
+          <div className="sticky top-[var(--header-h)] z-20 -mx-5 min-w-0 border-b border-rule bg-cream px-5 pb-3 pt-4 sm:-mx-8 sm:px-8">
             <DateStrip days={chips} selected={selected} />
           </div>
+
+          {/*
+            Above the board, and only for a device that has actually booked
+            something — it renders nothing otherwise, so a first visit is the
+            page it always was. Above rather than below because "you already
+            have a court on Tuesday" is worth knowing before picking a second
+            one, not after.
+          */}
+          <MyBookings />
 
           <BookingBoard
             dateLabel={longDateLabel(selected)}

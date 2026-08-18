@@ -170,6 +170,11 @@ export async function POST(request: Request) {
       dateLabel,
       timeRange,
       priceLabel: formatRsd(priceRsd),
+      // The one moment this token is ever handed out. No player email is
+      // collected, so the device that booked is the only place it can live —
+      // which is exactly what makes holding it proof of ownership.
+      cancelToken: booking.cancel_token,
+      startsAt: slot.startsAt.toISOString(),
     },
     { status: 201 },
   );
