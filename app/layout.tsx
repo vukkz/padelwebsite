@@ -73,6 +73,12 @@ export const metadata: Metadata = {
     locale: "sr_RS",
     type: "website",
   },
+  /*
+    Site-wide, for as long as this is a proposal rather than the club's site.
+    See app/robots.ts for why, and remove both together. `/admin` and
+    `/otkazivanje` set their own and stay noindex regardless.
+  */
+  robots: { index: false, follow: false },
 };
 
 export const viewport: Viewport = {

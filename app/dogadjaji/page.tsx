@@ -25,22 +25,22 @@ export default function DogadjajiPage() {
       title: "Travnjak",
       spec: "do 120 gostiju",
       text: "Ispod bedema, sa paviljonom i ležaljkama. Večere, venčanja, koktel prijemi.",
-      img: "/photos/wedding.jpg",
-      alt: "Svadbena večera na travnjaku ispod bedema tvrđave",
+      img: "/photos/pavilion-lawn.jpg",
+      alt: "Travnjak sa paviljonom i ležaljkama ispod bedema tvrđave",
     },
     {
       title: "Terasa",
       spec: "do 60 gostiju",
       text: "Natkriveni deo uz kafe, uz punu ugostiteljsku ponudu kluba.",
-      img: "/photos/pavilion-lawn.jpg",
-      alt: "Paviljon i ležaljke na travnjaku uz bedem",
+      img: "/photos/hero-drinks.jpg",
+      alt: "Poslužavnik sa pićem i reketima na terasi kluba",
     },
     {
       title: "Teren",
       spec: "turniri · projekcije",
       text: "Firmski turniri i projekcije utakmica ispod osvetljenog bedema.",
-      img: "/photos/cinema-night.jpg",
-      alt: "Projekcija utakmice uz osvetljeni bedem tvrđave",
+      img: "/photos/court-plaza.jpg",
+      alt: "Teren i oslikani plato ispod bedema tvrđave",
     },
   ];
 
@@ -52,9 +52,20 @@ export default function DogadjajiPage() {
           label="Premium event prostor"
           title="Tvrđava kao sala"
           lead="Zatvaramo ceo prostor za vas: travnjak ispod bedema, terasu i teren. Od večere za trideset ljudi do firmskog turnira sa projekcijom — organizaciju radimo od početka do kraja."
-          image="/photos/wedding.jpg"
-          alt="Svadbena večera na travnjaku ispod bedema tvrđave"
-          crop="object-[50%_44%] lg:object-[50%_34%]"
+          image="/photos/cinema-night.jpg"
+          alt="Projekcija utakmice pred publikom ispod osvetljenog bedema tvrđave"
+          /*
+            The hero was a wedding photograph: the couple mid-kiss, both faces
+            sharp, a dozen identifiable guests behind them. They consented to a
+            venue photographer, not to a third party's uncommissioned pitch —
+            and the club would likely recognise them. This frame is a public
+            event at the same venue where the crowd reads as a crowd and no one
+            is the subject, which is a different question entirely.
+
+            Lower than the old values because the interest here sits below the
+            middle: rampart across the top, screen and audience beneath it.
+          */
+          crop="object-[50%_54%] lg:object-[50%_46%]"
         >
           {/* Two affordances. tel: opens an OS prompt or nothing on desktop. */}
           <div

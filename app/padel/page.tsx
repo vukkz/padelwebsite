@@ -174,6 +174,18 @@ function Prices() {
             termina
           </p>
           {/*
+            PRODUCT.md lists these two numbers as a market estimate, not the
+            club's price list, and its fifth principle says unconfirmed facts
+            stay visibly unconfirmed. Until this sentence existed they read as
+            fact on the one screen where the club will check them hardest — and
+            being caught inventing a price is how a pitch ends. Said plainly it
+            does the opposite: it shows the gap is known and deliberate.
+          */}
+          <p className="w-full text-[15px] text-cream/85">
+            Cene su okvirna procena za ovaj predlog — zamenjujemo ih zvaničnim cenovnikom
+            kluba.
+          </p>
+          {/*
             PRODUCT.md records these figures as a market estimate rather than the
             club's price list, and requires unconfirmed facts to stay visibly
             unconfirmed. They are the largest numerals on the page.

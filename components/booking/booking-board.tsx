@@ -266,6 +266,15 @@ function Legend() {
         );
       })}
       <span className="ml-auto">Termin traje 90 minuta · plaćanje na licu mesta</span>
+      {/*
+        The grid states a price in every free cell — the most repeated
+        unconfirmed fact on the site, and the surface the club will scrutinise
+        first. Same disclosure as the /padel price table, on its own line so it
+        is not read as part of the legend.
+      */}
+      <span className="w-full">
+        Cene su okvirna procena za ovaj predlog, ne zvanični cenovnik kluba.
+      </span>
     </div>
   );
 }

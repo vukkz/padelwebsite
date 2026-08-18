@@ -299,11 +299,13 @@ function Events() {
 
 				<div className="relative aspect-[5/4] lg:col-span-7">
 					<Image
-						src="/photos/wedding.jpg"
-						alt="Svadbena večera na travnjaku ispod bedema tvrđave"
+						src="/photos/cinema-night.jpg"
+						alt="Projekcija utakmice pred publikom ispod osvetljenog bedema tvrđave"
 						fill
 						sizes="(max-width: 1024px) 92vw, 58vw"
-						className="object-cover object-[50%_38%]"
+						/* 38% framed the old wedding photograph; this one carries the
+						   screen and the audience below centre. */
+						className="object-cover object-[50%_58%]"
 					/>
 				</div>
 			</div>
