@@ -233,12 +233,14 @@ export function SiteFooter() {
               >
                 {CLUB.phone}
               </a>
-              <a
-                href={`mailto:${CLUB.email}`}
-                className="inline-flex min-h-11 items-center text-[15px] transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cream/40"
-              >
-                {CLUB.email}
-              </a>
+              {/*
+                The club email is gone from the frame, not restyled. It was the
+                site's second live action pointing at an address PRODUCT.md
+                marks unconfirmed, and a footer is exactly where someone checks
+                whether you got their details right. Phone and Instagram are
+                both taken from the club's own profile, so what remains is only
+                what can be stood behind.
+              */}
               <a
                 href={CLUB.instagram}
                 target="_blank"

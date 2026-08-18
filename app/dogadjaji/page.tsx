@@ -1,9 +1,10 @@
 import Image from "next/image";
 import type { Metadata } from "next";
-import { Mail, Phone } from "lucide-react";
+import { Phone } from "lucide-react";
 import { CLUB, EVENTS } from "@/lib/config";
 import { SiteFooter, SiteHeader } from "@/components/site-frame";
 import { PageHero } from "@/components/page-hero";
+import { InstagramIcon } from "@/components/icons/instagram";
 
 export const metadata: Metadata = {
   title: `Događaji — ${CLUB.name} ${CLUB.city}`,
@@ -79,11 +80,25 @@ export default function DogadjajiPage() {
               <Phone className="size-4" aria-hidden="true" />
               {CLUB.phone}
             </a>
+            {/*
+              Instagram, not email. `info@padelhouse.rs` is a guess — PRODUCT.md
+              lists it as unconfirmed — and this was the one place on the site
+              where an unconfirmed fact was wired to a live action with no
+              disclosure, on the page selling the highest-value booking there is.
+              A club rep tapping it in the room and not recognising the address
+              undoes the credit the price disclosures earn two pages over.
+
+              @padelhouse.beograd is confirmed, it is the club's own live
+              channel, and it is where a Belgrade venue actually receives event
+              enquiries.
+            */}
             <a
-              href={`mailto:${CLUB.email}`}
+              href={CLUB.instagram}
+              target="_blank"
+              rel="noreferrer noopener"
               className="label inline-flex min-h-11 items-center gap-2 text-cream/85 underline decoration-cream/40 underline-offset-[8px] transition-colors hover:text-cream hover:decoration-cream focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cream focus-visible:ring-offset-2 focus-visible:ring-offset-shade"
             >
-              <Mail className="size-4" aria-hidden="true" />
+              <InstagramIcon className="size-4" />
               Pošalji upit
             </a>
           </div>

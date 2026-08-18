@@ -208,7 +208,20 @@ function Included() {
   const items = [
     {
       title: "Tri terena",
-      text: "Sva tri su spoljna, sa reflektorima — večernji termini rade i kad padne mrak.",
+      /*
+        This said "večernji termini rade i kad padne mrak", which the schedule
+        does not support: SLOT_START_TIMES ends at 15:30, so the last slot
+        finishes at 17:00 and the venue closes at 18:00. There are no evening
+        slots to floodlight. The owner knows their own hours better than anyone
+        in the room, and one wrong fact about their venue spends the credit the
+        price disclosures on this very page are there to earn.
+
+        The floodlights themselves are real and visible in the photography, so
+        the fact stays — and the capability behind it is worth stating plainly,
+        because PEAK_START_HOUR already handles evening pricing the day the club
+        decides to extend.
+      */
+      text: `Sva tri su spoljna, pod reflektorima. Termini idu od ${SLOT_START_TIMES[0]} do ${SLOT_START_TIMES[SLOT_START_TIMES.length - 1]} — spremni su i za večernje, čim klub odluči da ih uvede.`,
     },
     {
       title: "Oprema na licu mesta",
