@@ -66,6 +66,4 @@ export type PublicSlotCell = {
   endsAt: string;
   priceRsd: number;
   status: SlotStatus;
-  /** Only set for blocked cells — e.g. "Stalni termin — firma Delta". */
-  blockReason?: string;
 };

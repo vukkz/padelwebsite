@@ -189,7 +189,6 @@ function Row({
         const state = SLOT_STATE[cell.status];
         const Icon = state.icon;
         const isFree = cell.status === "free";
-        const label = cell.status === "blocked" ? cell.blockReason || state.label : state.label;
 
         return (
           <button
@@ -197,7 +196,7 @@ function Row({
             type="button"
             disabled={!isFree}
             aria-disabled={!isFree}
-            aria-label={`${court.name}, ${time}, ${label}${isFree ? `, ${cell.priceRsd} dinara` : ""}`}
+            aria-label={`${court.name}, ${time}, ${state.label}${isFree ? `, ${cell.priceRsd} dinara` : ""}`}
             onClick={(e) => {
               if (!isFree) return;
               // Take focus before opening. The sheet restores focus to whatever
@@ -216,35 +215,27 @@ function Row({
           >
             {state.showLabel && (
               /*
-                Two separate failures met on the phone here.
+                The cell says what the state is and nothing about who holds it.
+                A block's `reason` names the customer often enough that the
+                public grid is the wrong place for it, so `getDayAvailability`
+                stops sending it and this renders `state.label` at every width
+                — "Stalni termin", the fact a player actually needs.
 
-                The `truncate` never fired: its parent is a flex item at the
-                default `min-width:auto`, so the row grew to fit the text and
-                pushed it out of a ~96px cell rather than clipping it. Hence
-                `min-w-0` on both, `w-full` to bind the row to the cell, and
-                `overflow-hidden` on the button as the backstop.
-
-                Clipping alone would not have made it readable, though.
-                `blockReason` is free text an admin types — the placeholder in
-                the recurring manager is literally "Stalni termin — Marko
-                Petrović" — and at this width no clip of it survives as
-                language: it reads "Stalni t…". So below `md` the cell shows
-                the state instead, stacked under its icon where the full cell
-                width is one word's worth of room. From `md` the cell is wide
-                enough for the admin's own wording, and it stays on one line.
-
-                Nothing is lost at any width: the button's aria-label is built
-                from `label`, so a screen reader still announces the full
-                reason on a phone.
+                Stacked under the icon below `md` because a ~96px cell has no
+                room for both on one line. That was the original bug: the
+                `truncate` here never fired, since its parent is a flex item at
+                the default `min-width:auto`, so the row grew to fit and pushed
+                the text out of the cell instead of clipping it. `min-w-0` on
+                both and `w-full` to bind the row to the cell are what make it
+                clip now, with `overflow-hidden` on the button as the backstop.
               */
               <span className="flex w-full min-w-0 flex-col items-center gap-0.5 text-[11px] leading-tight md:flex-row md:justify-center md:gap-1.5 md:text-xs">
                 <Icon
                   className={cn("size-3.5 shrink-0", state.iconClassName)}
                   aria-hidden="true"
                 />
-                <span className="min-w-0 max-w-full text-center md:truncate">
-                  <span className="md:hidden">{state.label}</span>
-                  <span className="hidden md:inline">{label}</span>
+                <span className="min-w-0 max-w-full truncate text-center">
+                  {state.label}
                 </span>
               </span>
             )}

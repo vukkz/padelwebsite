@@ -67,11 +67,20 @@ export async function getDayAvailability(dateStr: string): Promise<DayAvailabili
     court,
     cells: slots.map((slot): PublicSlotCell => {
       const k = key(court.id, slot.startsAt.toISOString());
-      const blockReason = blocked.get(k);
+      // Only *whether* the slot is blocked crosses into the public payload,
+      // never the block's `reason`. That reason is free text an admin types
+      // and it routinely names the person holding the standing slot — the
+      // recurring manager's own placeholder is "Stalni termin — Marko
+      // Petrović". This object is serialised to the browser on a page anyone
+      // can open, so carrying the reason here would publish a customer's name
+      // to the world whether or not the grid ever painted it. The grid shows
+      // the generic state label instead; `blocked` still maps to the reason
+      // for admin-side callers.
+      const isBlocked = blocked.has(k);
 
       let status: PublicSlotCell["status"];
       if (slot.startsAt.getTime() <= now) status = "past";
-      else if (blockReason) status = "blocked";
+      else if (isBlocked) status = "blocked";
       else if (taken.has(k)) status = "taken";
       else {
         status = "free";
@@ -85,7 +94,6 @@ export async function getDayAvailability(dateStr: string): Promise<DayAvailabili
         endsAt: slot.endsAt.toISOString(),
         priceRsd: slot.priceRsd,
         status,
-        ...(blockReason ? { blockReason } : {}),
       };
     }),
   }));
