@@ -208,16 +208,44 @@ function Row({
               onPick({ cell, courtName: court.name });
             }}
             className={cn(
-              "animate-slot-in flex min-h-[62px] flex-col items-center justify-center gap-0.5 rounded-sm border px-2 py-2 transition-all duration-200",
+              "animate-slot-in flex min-h-[62px] flex-col items-center justify-center gap-0.5 overflow-hidden rounded-sm border px-2 py-2 transition-all duration-200",
               "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
               state.className,
             )}
             style={{ animationDelay: `${rowIdx * 40}ms` }}
           >
             {state.showLabel && (
-              <span className="flex items-center gap-1.5 text-xs">
-                <Icon className={cn("size-3.5", state.iconClassName)} aria-hidden="true" />
-                <span className="truncate">{label}</span>
+              /*
+                Two separate failures met on the phone here.
+
+                The `truncate` never fired: its parent is a flex item at the
+                default `min-width:auto`, so the row grew to fit the text and
+                pushed it out of a ~96px cell rather than clipping it. Hence
+                `min-w-0` on both, `w-full` to bind the row to the cell, and
+                `overflow-hidden` on the button as the backstop.
+
+                Clipping alone would not have made it readable, though.
+                `blockReason` is free text an admin types — the placeholder in
+                the recurring manager is literally "Stalni termin — Marko
+                Petrović" — and at this width no clip of it survives as
+                language: it reads "Stalni t…". So below `md` the cell shows
+                the state instead, stacked under its icon where the full cell
+                width is one word's worth of room. From `md` the cell is wide
+                enough for the admin's own wording, and it stays on one line.
+
+                Nothing is lost at any width: the button's aria-label is built
+                from `label`, so a screen reader still announces the full
+                reason on a phone.
+              */
+              <span className="flex w-full min-w-0 flex-col items-center gap-0.5 text-[11px] leading-tight md:flex-row md:justify-center md:gap-1.5 md:text-xs">
+                <Icon
+                  className={cn("size-3.5 shrink-0", state.iconClassName)}
+                  aria-hidden="true"
+                />
+                <span className="min-w-0 max-w-full text-center md:truncate">
+                  <span className="md:hidden">{state.label}</span>
+                  <span className="hidden md:inline">{label}</span>
+                </span>
               </span>
             )}
             {isFree && (
